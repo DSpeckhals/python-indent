@@ -33,3 +33,23 @@ also_works_with_lists = ["apples", "oranges", "pears", "peaches", "mangoes",
 
 - __fluidIndentRegex__: Regular expression string to find lines where the next line should be indented relative to the __opening delimiter__.
 - __fluidUnindentRegex__: Regular expression string to find lines where the next line should be indented relative to the current __block__.
+
+
+### Future Enhancements
+
+- Allow for other (optional) types of indentation other than "Aligned with opening delimiter".
+
+Examples from PEP8:
+
+```python
+# More indentation included to distinguish this from the rest.
+def long_function_name(
+        var_one, var_two, var_three,
+        var_four):
+    print(var_one)
+
+# Hanging indents should add a level.
+foo = long_function_name(
+    var_one, var_two,
+    var_three, var_four)
+```
