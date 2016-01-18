@@ -1,8 +1,8 @@
 {
   "name": "python-indent",
   "main": "./lib/python-indent",
-  "version": "0.1.0",
-  "description": "Proper PEP8 indentation for Python parameters and lists.",
+  "version": "0.0.0",
+  "description": "Make Atom's Python auto-indentation behave in a truly PEP8 manner",
   "author": "Dustin Speckhals <dustin1114@gmail.com>",
   "keywords": [
     "python",

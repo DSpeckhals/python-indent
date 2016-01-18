@@ -16,6 +16,9 @@ describe 'python-indent', ->
     waitsForPromise ->
       atom.packages.activatePackage 'python-indent'
 
+    waitsForPromise ->
+        atom.packages.activatePackage 'language-python'
+
   describe 'package', ->
     it 'loads python file and package', ->
       expect(editor.getPath()).toContain FILE_NAME
@@ -50,7 +53,19 @@ describe 'python-indent', ->
       expect(buffer.lineForRow(2)).toBe ' '.repeat 9
 
     it 'allows for fluid indent in multi-level situations', ->
-      editor.insertText 'class TheClass(object):'
+      editor.insertText 'class TheClass(object):\n'
+      editor.autoIndentSelectedRows(1)
+      editor.insertText 'def test(param_a, param_b,\n'
+      properlyIndent()
+      editor.insertText 'param_c):\n'
+      properlyIndent()
+      expect(buffer.lineForRow(3)).toBe ' '.repeat 8
+
+      editor.insertText 'a_list = ["1", "2", "3",\n'
+      properlyIndent()
+      editor.insertText('"4"]\n')
+      properlyIndent()
+      expect(buffer.lineForRow(5)).toBe ' '.repeat 8
 
   describe 'when unindenting after newline', ->
     it 'fluid unindents after close def params', ->
@@ -65,7 +80,8 @@ describe 'python-indent', ->
       properlyIndent()
       editor.insertText 'False)\n'
       properlyIndent()
-      expect(buffer.lineForRow(2)).toBe ' '.repeat 4
+      console.log editor.getText()
+      expect(buffer.lineForRow(2)).toBe ''
 
     it 'fluid unindents after close bracket', ->
       editor.insertText 'a_list = ["1", "2",\n'
