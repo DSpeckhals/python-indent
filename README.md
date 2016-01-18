@@ -2,7 +2,7 @@
 
 _Make Atom's Python auto-indentation behave in a truly PEP8 manner_
 
-![example of python-indent](./resources/img/python-indent-demonstration.gif)
+![example of python-indent](https://raw.githubusercontent.com/DSpeckhals/python-indent/master/resources/img/python-indent-demonstration.gif)
 
 I love so much about Atom, but when trying to write Python, I've often found myself frustrated with its indentation behavior in that language. The main problem I've found is that Atom's core indentation behavior doesn't have the necessary API's yet to do what Python's [PEP8 style guide](https://www.python.org/dev/peps/pep-0008/#indentation) suggests. Enhancement requests and issues have been opened in [Atom Core](https://github.com/atom/atom) on a few occasions, but none have been resolved yet.
 
