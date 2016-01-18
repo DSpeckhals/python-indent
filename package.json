@@ -1,0 +1,26 @@
+{
+  "name": "python-indent",
+  "main": "./lib/python-indent",
+  "version": "0.1.0",
+  "description": "Proper PEP8 indentation for Python parameters and lists.",
+  "author": "Dustin Speckhals <dustin1114@gmail.com>",
+  "keywords": [
+    "python",
+    "indent",
+    "PEP8"
+  ],
+  "contributors": [
+    {
+      "name": "Dustin Speckhals",
+      "email": "dustin1114@gmail.com"
+    }
+  ],
+  "activationHooks": {
+    "language-python": "language:grammar-used"
+  },
+  "repository": "https://github.com/DSpeckhals/python-indent",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  }
+}
