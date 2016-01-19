@@ -1,3 +1,9 @@
+## 0.2.0 - New Indentation Options
+- Add "hanging" indentation feature in Settings.
+- For "hanging" indentation, add setting for number of tabs to indent.
+- Add further examples and improve documentation.
+- Fix potential bug for `:` character when ending a fluid indentation and the character exists somewhere else in the line (perhaps a string).
+
 ## 0.1.0 - Initial Release
-* Fluid indent in tuples, lists, and parameters.
-* Unindent to tab after fluid indented tuples, lists and parameters.
+- Fluid indent in tuples, lists, and parameters.
+- Unindent to tab after fluid indented tuples, lists and parameters.

@@ -5,14 +5,30 @@ supportedGrammars =
 
 module.exports = PythonIndent =
   config:
+    continuationIndentType:
+      type: 'string'
+      default: 'aligned with opening delimiter'
+      description: 'Indent type for continuing lines as described in [PEP 0008 -- Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/#indentation)'
+      enum: [
+        'aligned with opening delimiter',
+        'hanging'
+      ]
     fluidIndentRegex:
       type: 'string'
       default: '^.*(\\(|\\[).*,$'
-      description: 'Regular Expression for fluid indenting'
+      description: 'Regular Expression for _aligned with opening delimiter_ __Continuation Indent Type__, and used for determining when this type of indent should be _started_.'
     fluidUnindentRegex:
       type: 'string'
       default: '^\\s+\\S*(\\)|\\]):?$'
-      description: 'Regular expression for fluid unindenting'
+      description: 'Regular Expression for _aligned with opening delimiter_ __Continuation Indent Type__, and used for determining when this type of indent should be _ended_.'
+    hangingIndentTabs:
+      type: 'number'
+      default: 1
+      description: 'If __Continuation Indent Type__ is set to _hanging_, how many tabs should be used? If __Continuation Indent Type__ is not _hanging_, this setting is ignored'
+      enum: [
+        1,
+        2
+      ]
 
   activate: (state) ->
     @subscriptions = new CompositeDisposable
@@ -22,15 +38,26 @@ module.exports = PythonIndent =
     @subscriptions.dispose()
 
   properlyIndent: ->
-    # Get configs
-    fluidIndentRegex = new RegExp(atom.config.get 'python-indent.fluidIndentRegex')
-    fluidUnindentRegex = new RegExp(atom.config.get 'python-indent.fluidUnindentRegex')
-    return unless fluidIndentRegex and fluidUnindentRegex
-
+    # Get base variables
     editor = atom.workspace.getActiveTextEditor()
     row = editor.getCursorBufferPosition().row
     previousLine = editor.buffer.lineForRow(row - 1)
     return unless row
+
+    # Get continuation indent type configuration
+    indentType = atom.config.get 'python-indent.continuationIndentType'
+
+    # Based on configuration, branch to corresponding logic
+    if indentType is 'aligned with opening delimiter'
+      PythonIndent.indentOnOpeningDelimiter(editor, row, previousLine)
+    else if indentType is 'hanging'
+      PythonIndent.indentHanging(editor, row, previousLine)
+
+  indentOnOpeningDelimiter: (editor, row, previousLine) ->
+    # Get regex settings
+    fluidIndentRegex = new RegExp(atom.config.get 'python-indent.fluidIndentRegex')
+    fluidUnindentRegex = new RegExp(atom.config.get 'python-indent.fluidUnindentRegex')
+    return unless fluidIndentRegex and fluidUnindentRegex
 
     # Check if previous line should line up after opening delimiter
     if (match = fluidIndentRegex.exec previousLine) isnt null
@@ -58,6 +85,7 @@ module.exports = PythonIndent =
       # soft-tabs, though I don't see it used anywhere in the core.
       indent = editor.buildIndentString(tabs, column=offset)
 
+      # Set the indent
       editor.getBuffer().setTextInRange([[row, 0], [row, 0]], indent)
 
     # Check if previous line should indent into block normally
@@ -73,9 +101,19 @@ module.exports = PythonIndent =
         if fluidIndentRegex.test line
 
           # Indent one tab-level past declaration
-          indent = editor.indentationForBufferRow(i)
+          indent = editor.indentationForBufferRow i
           indent += 1 if previousLine.slice(-1) is ':'
           editor.setIndentationForBufferRow row, indent
 
           # Stop trying after success
           break
+
+  indentHanging: (editor, row, previousLine) ->
+    # Stop if no match
+    return unless (match = /^.*(\(|\[)$/.exec previousLine) isnt null
+
+    # Indent at the current block level plus the setting amount (1 or 2)
+    indent = (editor.indentationForBufferRow row) + (atom.config.get 'python-indent.hangingIndentTabs')
+
+    # Set the indent
+    editor.setIndentationForBufferRow row, indent
