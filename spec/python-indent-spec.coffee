@@ -80,7 +80,6 @@ describe 'python-indent', ->
       properlyIndent()
       editor.insertText 'False)\n'
       properlyIndent()
-      console.log editor.getText()
       expect(buffer.lineForRow(2)).toBe ''
 
     it 'fluid unindents after close bracket', ->

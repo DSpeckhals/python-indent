@@ -33,7 +33,7 @@ module.exports = PythonIndent =
     return unless row
 
     # Check if previous line should line up after opening delimiter
-    if (match = fluidIndentRegex.exec previousLine) != null
+    if (match = fluidIndentRegex.exec previousLine) isnt null
 
       # Get index of opening delimiter.
       # The indent should be one whitespace character past this (sorry, no tabs)
@@ -74,7 +74,7 @@ module.exports = PythonIndent =
 
           # Indent one tab-level past declaration
           indent = editor.indentationForBufferRow(i)
-          indent += 1 if previousLine.lastIndexOf(':') > -1
+          indent += 1 if previousLine.slice(-1) is ':'
           editor.setIndentationForBufferRow row, indent
 
           # Stop trying after success
