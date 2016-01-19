@@ -15,6 +15,7 @@ This package is made to fill that gap; __python-indent__ listens for `editor:new
 
 - __Continuation Indent Type__: Indent type for continuing lines as described in [PEP 0008 -- Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/#indentation).
   - aligned with opening delimiter
+
     ```python
     def function_with_lots_of_params(param_1, param_2,
                                      param_3, param_4,
@@ -22,6 +23,7 @@ This package is made to fill that gap; __python-indent__ listens for `editor:new
                                      param_6)
     ```
   - hanging
+
       ```python
       def function_with_lots_of_params(
           param_1, param_2,
