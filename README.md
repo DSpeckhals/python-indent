@@ -1,4 +1,4 @@
-# python-indent
+# python-indent [![Build Status](https://travis-ci.org/DSpeckhals/python-indent.svg?branch=master)](https://travis-ci.org/DSpeckhals/python-indent)  
 
 _Make Atom's Python auto-indentation behave in a truly PEP8 manner_
 
