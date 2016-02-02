@@ -1,3 +1,7 @@
+## 0.3.1 - Tweak new functionality
+- Fix bug where hanging indents were deleting one non-newline characters when a new line is created directly after an opening parentheses, but with trailing characters.
+- Make sure this package is only run with Python language files.
+
 ## 0.3.0 - Smart Decisions for Indentation Type
 - Remove setting for __Continuation Indent Type__. This is now automatically detected based on syntax, allowing for both _aligned with opening delmiter_ and _hanging_ indent types at the same time.
 - Add setting for __Hanging Indent Regex__.

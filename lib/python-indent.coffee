@@ -29,6 +29,8 @@ module.exports = PythonIndent =
   activate: (state) ->
     @subscriptions = new CompositeDisposable
     @subscriptions.add atom.commands.add 'atom-text-editor', 'editor:newline': => @properlyIndent()
+
+    # Cache regular expressions
     @openingDelimiterIndentRegex = new RegExp(atom.config.get 'python-indent.openingDelimiterIndentRegex')
     @openingDelimiterUnindentRegex = new RegExp(atom.config.get 'python-indent.openingDelimiterUnindentRegex')
     @hangingIndentRegex = new RegExp(atom.config.get 'python-indent.hangingIndentRegex')
@@ -37,8 +39,11 @@ module.exports = PythonIndent =
     @subscriptions.dispose()
 
   properlyIndent: ->
-    # Get base variables
+    # Make sure this is a Python file
     editor = atom.workspace.getActiveTextEditor()
+    return unless editor.getGrammar().name == 'Python'
+
+    # Get base variables
     row = editor.getCursorBufferPosition().row
     previousLine = editor.buffer.lineForRow(row - 1)
     return unless row
@@ -102,5 +107,5 @@ module.exports = PythonIndent =
 
     # Set the indent
     editor.transact =>
-      editor.delete() if not /.*(\)|\]|\})$/.test editor.buffer.lineForRow(row)
+      editor.delete() if /^\s*\n$/.test editor.buffer.lineForRow(row)
       editor.setIndentationForBufferRow row, indent
