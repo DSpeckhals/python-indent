@@ -11,10 +11,9 @@ I love a lot about Atom, but when trying to write Python, I've often found mysel
 
 This package is made to fill that gap; __python-indent__ listens for `editor:newline` events in Python source files, and when triggered, adjusts the indentation to be lined up relative to the opening delimiter of the statement _or_ "hanging" (for parameters, tuples, or lists). Also, when proper unindenting (back to normal) is necessary, this package assures that is done correctly.
 
-### Settings
-
-- __Continuation Indent Type__: Indent type for continuing lines as described in [PEP 0008 -- Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/#indentation).
-  - aligned with opening delimiter
+### Tab Types
+Both indent types for continuing lines as described in [PEP 0008 -- Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/#indentation) are auto-detected and applied by this package.
+  - Aligned with Opening Delimiter
 
     ```python
     def function_with_lots_of_params(param_1, param_2,
@@ -22,7 +21,7 @@ This package is made to fill that gap; __python-indent__ listens for `editor:new
                                      really_log_parameter_name,
                                      param_6)
     ```
-  - hanging
+  - Hanging
 
       ```python
       def function_with_lots_of_params(
@@ -31,9 +30,12 @@ This package is made to fill that gap; __python-indent__ listens for `editor:new
           really_log_parameter_name,
           param_6)
       ```
-- __Fluid Indent Regex__: Regular expression string to find lines where the next line should be indented relative to the __opening delimiter__.
-- __Fluid Unindent Regex__: Regular expression string to find lines where the next line should be indented relative to the current __block__.
-- __Hanging Indent Tabs__: If __Continuation Indent Type__ is set to _hanging_, how many tabs should be used? If __Continuation Indent Type__ is not _hanging_, this setting is ignored
+
+### Settings
+- __Aligned With Opening Delimiter Indent Regex__: Regular Expression for _aligned with opening delimiter_ continuation indent type, and used for determining when this type of indent should be _started_..
+- __Aligned With Opening Delimiter Unindent Regex__: Regular Expression for _aligned with opening delimiter_ continuation indent type, and used for determining when this type of indent should be _ended_.
+- __Hanging Indent Regex__: Regular Expression for _hanging indent_ used for determining when this type of indent should be _started_.
+- __Hanging Indent Tabs__: Number of tabs used for _hanging_ indents
 
 ### Examples
 
@@ -47,7 +49,7 @@ def with_python_indend_packgage_added(first_parameter, second_parameter,
     #<--properly unindents to here
     pass
 
-def with_hanging_indent_option(first_parameter, second_parameter,
+def with_hanging_indent(first_parameter, second_parameter,
     third_parameter):
     pass
 
