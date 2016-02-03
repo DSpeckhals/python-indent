@@ -1,4 +1,8 @@
-## 0.3.1 - Tweak new functionality
+## 0.3.2 - Add Support for MagicPython
+- Add MagicPython as a supported grammar.
+- Tweak regex for hanging indent new lines.
+
+## 0.3.1 - Tweak New Functionality
 - Fix bug where hanging indents were deleting one non-newline characters when a new line is created directly after an opening parentheses, but with trailing characters.
 - Make sure this package is only run with Python language files.
 

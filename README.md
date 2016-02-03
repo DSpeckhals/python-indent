@@ -11,7 +11,7 @@ I love a lot about Atom, but when trying to write Python, I've often found mysel
 
 This package is made to fill that gap; __python-indent__ listens for `editor:newline` events in Python source files, and when triggered, adjusts the indentation to be lined up relative to the opening delimiter of the statement _or_ "hanging" (for parameters, tuples, or lists). Also, when proper unindenting (back to normal) is necessary, this package assures that is done correctly.
 
-### Tab Types
+### Indent Types
 Both indent types for continuing lines as described in [PEP 0008 -- Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/#indentation) are auto-detected and applied by this package.
   - Aligned with Opening Delimiter
 

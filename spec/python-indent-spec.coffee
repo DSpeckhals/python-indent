@@ -13,11 +13,19 @@ describe 'python-indent', ->
         editor.setTabLength 4
 
         buffer = editor.buffer
-    waitsForPromise ->
-      atom.packages.activatePackage 'python-indent'
 
     waitsForPromise ->
-        atom.packages.activatePackage 'language-python'
+        packages = atom.packages.getAvailablePackageNames()
+
+        if 'language-python' in packages
+          languagePackage = 'language-python'
+        else if 'MagicPython' in packages
+          languagePackage = 'MagicPython'
+
+        atom.packages.activatePackage languagePackage
+
+    waitsForPromise ->
+      atom.packages.activatePackage 'python-indent'
 
   describe 'package', ->
     it 'loads python file and package', ->
@@ -28,10 +36,6 @@ describe 'python-indent', ->
   describe 'aligned with opening delimiter', ->
 
     describe 'when indenting after newline', ->
-
-      beforeEach ->
-        waitsForPromise ->
-          atom.packages.activatePackage 'python-indent'
 
       it 'indents after open def params', ->
         editor.insertText 'def test(param_a, param_b, param_c,\n'

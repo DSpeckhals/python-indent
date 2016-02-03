@@ -2,7 +2,7 @@
   "name": "python-indent",
   "main": "./lib/python-indent",
   "version": "0.3.1",
-  "description": "Make Atom's Python auto-indentation behave in a truly PEP8 manner",
+  "description": "Python PEP8 auto-indentation",
   "author": "Dustin Speckhals <dustin1114@gmail.com>",
   "keywords": [
     "python",
@@ -15,9 +15,6 @@
       "email": "dustin1114@gmail.com"
     }
   ],
-  "activationHooks": {
-    "language-python": "language:grammar-used"
-  },
   "repository": "https://github.com/DSpeckhals/python-indent",
   "license": "MIT",
   "engines": {
