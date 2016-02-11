@@ -38,7 +38,7 @@ module.exports = PythonIndent =
   properlyIndent: ->
     # Make sure this is a Python file
     editor = atom.workspace.getActiveTextEditor()
-    return unless editor.getGrammar().name in ['Python', 'MagicPython']
+    return unless editor.getGrammar().scopeName.substring(0, 13) == 'source.python'
 
     # Get base variables
     row = editor.getCursorBufferPosition().row
