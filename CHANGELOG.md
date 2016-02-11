@@ -1,3 +1,6 @@
+## 0.3.3 - Support All Python-Based Grammars
+- Search the `scopeName` of the current grammar rather than the `packageName`. This allows the package to scale better with all Python-based grammars. Thanks @alix-!
+
 ## 0.3.2 - Add Support for MagicPython
 - Add MagicPython as a supported grammar.
 - Tweak regex for hanging indent new lines.
