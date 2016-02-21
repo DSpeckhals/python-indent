@@ -4,7 +4,7 @@ module.exports = PythonIndent =
   config:
     openingDelimiterIndentRegex:
       type: 'string'
-      default: '^.*(\\(|\\[).*,$'
+      default: '^.*(\\(|\\[).*,\\s*$'
       description: 'Regular Expression for _aligned with opening delimiter_ continuation indent type, and used for determining when this type of indent should be _started_.'
     openingDelimiterUnindentRegex:
       type: 'string'
