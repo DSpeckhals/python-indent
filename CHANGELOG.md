@@ -1,3 +1,6 @@
+## 0.3.4 - Improve Hanging Indent Behavior
+- Remove fringe functionality introduced in `0.3.0` that caused newlines to not be created when text was on the next line.
+
 ## 0.3.3 - Support All Python-Based Grammars
 - Search the `scopeName` of the current grammar rather than the `packageName`. This allows the package to scale better with all Python-based grammars. Thanks @alix-!
 
