@@ -12,7 +12,7 @@ module.exports = PythonIndent =
       description: 'Regular Expression for _aligned with opening delimiter_ continuation indent type, and used for determining when this type of indent should be _ended_.'
     hangingIndentRegex:
       type: 'string'
-      default: '^.*(\\(|\\[)$'
+      default: '^.*(\\(|\\[)\\s*$'
       description: 'Regular Expression for _hanging indent_ used for determining when this type of indent should be _started_.'
     hangingIndentTabs:
       type: 'number'
