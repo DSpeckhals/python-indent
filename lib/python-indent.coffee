@@ -54,43 +54,14 @@ module.exports = PythonIndent =
     # Parse the entire file up to the current point, keeping track of brackets
     lines = editor.getTextInBufferRange([[0,0], [row, col]]).split('\n')
 
-    stacks = PythonIndent.parseLines(lines)
+    bracketStack = PythonIndent.parseLines(lines)
 
-    bracketStack = stacks[0]
-    parenthesesStack = stacks[1]
-
-    if not bracketStack.length and not parenthesesStack.length
+    if not bracketStack.length
         return
 
-    # Get the indent column, need to check both bracket and parentheses locations
-    if not bracketStack.length
-        # Only have open parentheses to worry about
-        [..., indentColumn] = parenthesesStack
-        indentColumn = indentColumn[1]
-    else if not parenthesesStack.length
-        # Only have open brackets to worry about
-        [..., indentColumn] = bracketStack
-        indentColumn = indentColumn[1]
-    else
-        # Have both open brackets and open parentheses to worry about
-        [..., bracketIndent] = bracketStack
-        [..., parenthesesIndent] = parenthesesStack
 
-        # Find out which came last, checking rows and then columns
-        useBracket = true
-        if bracketIndent[0] < parenthesesIndent[0]
-            useBracket = false
-        else if bracketIndent[0] == parenthesesIndent[0]
-            if bracketIndent[1] < parenthesesIndent[1]
-                useBracket = false
-
-        if useBracket
-            indentColumn = bracketIndent[1]
-        else
-            indentColumn = parenthesesIndent[1]
-
-    # this is the column where the bracket/paren was, so need to bump by one
-    indentColumn = indentColumn + 1
+    # this is the column where the bracket was, so need to bump by one
+    indentColumn = bracketStack.pop()[1] + 1
 
     # Get tab length for context
     tabLength = editor.getTabLength()
@@ -125,10 +96,8 @@ module.exports = PythonIndent =
 
   parseLines: (lines) ->
     # bracketStack is a stack of [row, column] arrays indicating the
-    # location of the opening bracket
+    # location of the opening bracket (square, curly, or parentheses)
     bracketStack = []
-    # parenthesesStack is a similar stack but for parentheses
-    parenthesesStack = []
     # if we are in a string, this tells us what character introduced the string
     # i.e., did this string start with ' or with "?
     stringDelimiter = []
@@ -155,21 +124,14 @@ module.exports = PythonIndent =
                         when '\\'
                             isEscaped = true
             else
-                switch c
-                    when '#'
-                        break
-                    when '['
-                        bracketStack.push([row, col])
-                    when ']'
-                        bracketStack.pop()
-                    when '('
-                        parenthesesStack.push([row, col])
-                    when ')'
-                        parenthesesStack.pop()
-                    when "'"
-                        stringDelimiter = "'"
-                    when '"'
-                        stringDelimiter = '"'
+                if c == '#'
+                    break
+                if c in '[({'
+                    bracketStack.push([row, col])
+                if c in '})]'
+                    bracketStack.pop()
+                if c in '\'"'
+                    stringDelimiter = c
 
     # return the stacks as an array
-    return [bracketStack, parenthesesStack]
+    return bracketStack
