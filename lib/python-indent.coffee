@@ -89,12 +89,18 @@ module.exports = PythonIndent =
         else
             indentColumn = parenthesesIndent[1]
 
+    # this is the column where the bracket/paren was, so need to bump by one
+    indentColumn = indentColumn + 1
+
     # Get tab length for context
     tabLength = editor.getTabLength()
 
+    console.log('indentColumn: ', indentColumn)
+
     # Calculate soft-tabs from spaces (can have remainder)
-    tabs = (indentColumn / tabLength) - editor.indentationForBufferRow row
-    rem = indentColumn % tabLength
+    tabs = (indentColumn / tabLength)
+    rem = ((tabs - Math.floor(tabs)) * tabLength)
+    console.log('tabs: ', tabs, 'rem: ', rem)
 
     # If there's a remainder, `editor.buildIndentString` requires the tab to
     # be set past the desired indentation level, thus the ceiling.
@@ -106,109 +112,64 @@ module.exports = PythonIndent =
 
     # I'm glad Atom has an optional `column` param to subtract spaces from
     # soft-tabs, though I don't see it used anywhere in the core.
+
+    console.log('tabs:', tabs, 'offset:', offset)
+
     indent = editor.buildIndentString(tabs, column=offset)
 
+    console.log('len:', indent.length, 'str: "', indent, '"')
+
     # Set the indent
-    editor.getBuffer().setTextInRange([[row, 0], [row, 0]], indent)
+    editor.getBuffer().setTextInRange([[row, 0], [row, editor.indentationForBufferRow(row) * tabLength]], indent)
 
 
   parseLines: (lines) ->
-    # initialize some empty stacks
+    # bracketStack is a stack of [row, column] arrays indicating the
+    # location of the opening bracket
     bracketStack = []
+    # parenthesesStack is a similar stack but for parentheses
     parenthesesStack = []
+    # if we are in a string, this tells us what character introduced the string
+    # i.e., did this string start with ' or with "?
+    stringDelimiter = []
 
     # loop over each line, adding to each stack
-    for i in [0..lines.length-1]
-        line = lines[i]
-        stacks = PythonIndent.parseLine(bracketStack, parenthesesStack, [], i, 0, line)
-        bracketStack.concat(stacks[0])
-        parenthesesStack.concat(stacks[1])
+    for row in [0 .. lines.length-1]
+        line = lines[row]
+
+        # boolean, whether or not the current character is being escaped
+        isEscaped = false
+
+        for col in [0 .. line.length-1]
+            c = line[col]
+
+            # if stringDelimiter is set, then we are in a string
+            if stringDelimiter.length
+                # we are currently in a string
+                if isEscaped
+                    isEscaped = false
+                else
+                    switch c
+                        when stringDelimiter
+                            stringDelimiter = []
+                        when '\\'
+                            isEscaped = true
+            else
+                switch c
+                    when '#'
+                        break
+                    when '['
+                        bracketStack.push([row, col])
+                    when ']'
+                        bracketStack.pop()
+                    when '('
+                        parenthesesStack.push([row, col])
+                    when ')'
+                        parenthesesStack.pop()
+                    when "'"
+                        stringDelimiter = "'"
+                    when '"'
+                        stringDelimiter = '"'
 
     # return the stacks as an array
     return [bracketStack, parenthesesStack]
-
-
-  parseLine: (bracketStack, parenthesesStack, stringDelimiter, row, col, line) ->
-    # base case
-
-    if not line.length or (not stringDelimiter.length and line[0] == '#')
-        # stacks will be turned as array
-        return [bracketStack, parenthesesStack]
-
-    c = line[0]
-
-    # if stringDelimiter is set, then we are in a string
-    if stringDelimiter.length
-        # if current character is same as string delimiter, then we have exited string
-        if c == stringDelimiter
-            stringDelimiter = []
-    else
-        switch c
-            when '['
-                bracketStack.push([row, col])
-            when ']'
-                bracketStack.pop()
-            when '('
-                parenthesesStack.push([row, col])
-            when ')'
-                parenthesesStack.pop()
-            when '\''
-                stringDelimiter = '\''
-            when '"'
-                stringDelimiter = '"'
-
-    return PythonIndent.parseLine(bracketStack, parenthesesStack,
-                                  stringDelimiter, row, col+1, line[1..])
-
-  #
-  # indentOnOpeningDelimiter: (editor, row, previousLine, matchOpeningDelimiter) ->
-  #   # Get index of opening delimiter.
-  #   # The indent should be one whitespace character past this (sorry, no tabs)
-  #   indentColumn = previousLine.lastIndexOf(matchOpeningDelimiter[1]) + 1
-  #
-  #   # Get tab length for context
-  #   tabLength = editor.getTabLength()
-  #
-  #   # Calculate soft-tabs from spaces (can have remainder)
-  #   tabs = (indentColumn / tabLength) - editor.indentationForBufferRow row
-  #   rem = indentColumn % tabLength
-  #
-  #   # If there's a remainder, `editor.buildIndentString` requires the tab to
-  #   # be set past the desired indentation level, thus the ceiling.
-  #   tabs = if rem > 0 then Math.ceil tabs else tabs
-  #
-  #   # Offset is the number of spaces to subtract from the soft-tabs if they
-  #   # are past the desired indentation (not divisible by tab length).
-  #   offset = if rem > 0 then tabLength - rem else 0
-  #
-  #   # I'm glad Atom has an optional `column` param to subtract spaces from
-  #   # soft-tabs, though I don't see it used anywhere in the core.
-  #   indent = editor.buildIndentString(tabs, column=offset)
-  #
-  #   # Set the indent
-  #   editor.getBuffer().setTextInRange([[row, 0], [row, 0]], indent)
-  #
-  # unindentOnOpeningDelimiter: (editor, row, previousLine) ->
-  #   # Get all preceding lines
-  #   lines = if row > 0 then editor.buffer.lines[0..row - 1] else []
-  #
-  #   # Loop in reverse through lines
-  #   for line, i in lines by -1
-  #
-  #     # Set indent for row after declaration of block
-  #     if PythonIndent.openingDelimiterIndentRegex.test line
-  #
-  #       # Indent one tab-level past declaration
-  #       indent = editor.indentationForBufferRow i
-  #       indent += 1 if previousLine.slice(-1) is ':'
-  #       editor.setIndentationForBufferRow row, indent
-  #
-  #       # Stop trying after success
-  #       break
-  #
-  # indentHanging: (editor, row, previousLine) ->
-  #   # Indent at the current block level plus the setting amount (1 or 2)
-  #   indent = (editor.indentationForBufferRow row) + (atom.config.get 'python-indent.hangingIndentTabs')
-  #
-  #   # Set the indent
-  #   editor.setIndentationForBufferRow row, indent
