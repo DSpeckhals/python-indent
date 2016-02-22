@@ -49,37 +49,27 @@ module.exports = PythonIndent =
     row = editor.getCursorBufferPosition().row
     col = editor.getCursorBufferPosition().column
 
-    # What does this line do?
-    return unless row
-
-    PythonIndent.indentCorrectly(editor, row, col)
-
-
-  indentCorrectly: (editor, row, col) ->
     # Parse the entire file up to the current point, keeping track of brackets
     lines = editor.getTextInBufferRange([[0,0], [row, col]]).split('\n')
 
+    # A stack of [row, col] pairs describing where open brackets are
     bracketStack = PythonIndent.parseLines(lines)
 
-    if not bracketStack.length
-        return
+    return unless bracketStack.length
 
-
-    # this is the column where the bracket was, so need to bump by one
+    # bracketStack.pop()[1] is the column where the bracket was, so need to bump by one
     indentColumn = bracketStack.pop()[1] + 1
 
     # Get tab length for context
     tabLength = editor.getTabLength()
 
-    console.log('indentColumn: ', indentColumn)
-
     # Calculate soft-tabs from spaces (can have remainder)
     tabs = (indentColumn / tabLength)
     rem = ((tabs - Math.floor(tabs)) * tabLength)
-    console.log('tabs: ', tabs, 'rem: ', rem)
 
     # If there's a remainder, `editor.buildIndentString` requires the tab to
     # be set past the desired indentation level, thus the ceiling.
+    # TODO: is the conditional necessary? Maybe to avoid floating point errors?
     tabs = if rem > 0 then Math.ceil tabs else tabs
 
     # Offset is the number of spaces to subtract from the soft-tabs if they
@@ -88,15 +78,17 @@ module.exports = PythonIndent =
 
     # I'm glad Atom has an optional `column` param to subtract spaces from
     # soft-tabs, though I don't see it used anywhere in the core.
-
-    console.log('tabs:', tabs, 'offset:', offset)
-
+    # It looks like for hard tabs, the "tabs" input can be fractional and
+    # the "column" input is ignored...?
     indent = editor.buildIndentString(tabs, column=offset)
 
-    console.log('len:', indent.length, 'str: "', indent, '"')
-
-    # Set the indent
-    editor.getBuffer().setTextInRange([[row, 0], [row, editor.indentationForBufferRow(row) * tabLength]], indent)
+    # The range of text to replace with our indent
+    # will need to change this for hard tabs, especially tricky for when
+    # hard tabs have mixture of tabs + spaces, which they can judging from
+    # the editor.buildIndentString function
+    startRange = [row, 0]
+    stopRange = [row, editor.indentationForBufferRow(row) * tabLength]
+    editor.getBuffer().setTextInRange([startRange, stopRange], indent)
 
 
   parseLines: (lines) ->
@@ -106,6 +98,9 @@ module.exports = PythonIndent =
     # if we are in a string, this tells us what character introduced the string
     # i.e., did this string start with ' or with "?
     stringDelimiter = []
+
+    # NOTE: this parsing will only be correct if the python code is well-formed
+    #       statements like "[0, (1, 2])" might break the parsing
 
     # loop over each line, adding to each stack
     for row in [0 .. lines.length-1]
@@ -119,15 +114,13 @@ module.exports = PythonIndent =
 
             # if stringDelimiter is set, then we are in a string
             if stringDelimiter.length
-                # we are currently in a string
                 if isEscaped
                     isEscaped = false
                 else
-                    switch c
-                        when stringDelimiter
-                            stringDelimiter = []
-                        when '\\'
-                            isEscaped = true
+                    if c == stringDelimiter
+                        stringDelimiter = []
+                    if c == '\\'
+                        isEscaped = true
             else
                 if c == '#'
                     break
