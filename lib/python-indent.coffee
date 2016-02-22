@@ -1,5 +1,10 @@
 {CompositeDisposable} = require 'atom'
 
+# TODO: handle hanging indents
+# TODO: handle hard indents, which CAN also have spaces in them (!!!)
+#       see "stopRange" in "properlyIndent"
+# TODO: unindent back to previous level after all brackets have been closed
+
 module.exports = PythonIndent =
   config:
     openingDelimiterIndentRegex:
