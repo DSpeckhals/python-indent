@@ -57,12 +57,37 @@ module.exports = PythonIndent =
     lines = editor.getTextInBufferRange([[0,0], [row, col]]).split('\n')
 
     # A stack of [row, col] pairs describing where open brackets are
-    bracketStack = PythonIndent.parseLines(lines)
+    stacks = PythonIndent.parseLines(lines)
+    openBracketStack = stacks[0]
+    closeBracketStack = stacks[1]
 
-    return unless bracketStack.length
+    return unless openBracketStack.length or closeBracketStack.length
 
-    # bracketStack.pop()[1] is the column where the bracket was, so need to bump by one
-    indentColumn = bracketStack.pop() + 1
+    if not openBracketStack.length
+        # can assume closeBracketStack is not empty
+        lastClosedBracketLocations = closeBracketStack.pop()
+        if lastClosedBracketLocations[1] == row-1
+            # we just closed a bracket on the row, get indentation from the
+            # row where it was opened
+            indentLevel = editor.indentationForBufferRow(lastClosedBracketLocations[0])
+
+            # TODO: handle comments/multi-line strings that contain colons
+            functionDefinitionRegex = new RegExp('.*\\s*:\\s*$')
+            if lines.length > 1 and functionDefinitionRegex.test(lines.splice(-2)[0])
+                # we just finished defining a function, need to increase indentation
+                indentLevel += 1
+
+            editor.setIndentationForBufferRow(row, indentLevel)
+        return
+
+    # openBracketStack.pop()[1] is the column where the bracket was, so need to bump by one
+    lastOpenBracketLocations = openBracketStack.pop()
+    if lastOpenBracketLocations[0] < row - 1
+        # The bracket was opened before the previous line,
+        # we should use whatever indent we are given.
+        # This will correctly handle hanging indents.
+        return
+    indentColumn = lastOpenBracketLocations[1] + 1
 
     # Get tab length for context
     tabLength = editor.getTabLength()
@@ -96,9 +121,13 @@ module.exports = PythonIndent =
 
 
   parseLines: (lines) ->
-    # bracketStack is an array of columns indicating the location
+    # openBracketStack is an array of [row, col] indicating the location
     # of the opening bracket (square, curly, or parentheses)
-    bracketStack = []
+    openBracketStack = []
+    # closeBracketStack is an array of [rowOpen, rowClose] describing the
+    # row where the bracket was opened, and the row where the bracket was closed.
+    # The top of the stack is the last bracket-pair to be closed.
+    closeBracketStack = []
     # if we are in a string, this tells us what character introduced the string
     # i.e., did this string start with ' or with "?
     stringDelimiter = []
@@ -117,6 +146,7 @@ module.exports = PythonIndent =
             c = line[col]
 
             # if stringDelimiter is set, then we are in a string
+            # Note that this works correctly even for triple quoted strings
             if stringDelimiter.length
                 if isEscaped
                     isEscaped = false
@@ -129,13 +159,13 @@ module.exports = PythonIndent =
                 if c == '#'
                     break
                 else if c in '[({'
-                    bracketStack.push(col)
+                    openBracketStack.push([row, col])
                 else if c in '})]'
-                    bracketStack.pop()
+                    closeBracketStack.push([openBracketStack.pop()[0], row])
                 else if c in '\'"'
                     stringDelimiter = c
 
-    return bracketStack
+    return [openBracketStack, closeBracketStack]
 
   indentHanging: (editor, row, previousLine) ->
     # Indent at the current block level plus the setting amount (1 or 2)
