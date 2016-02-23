@@ -58,7 +58,7 @@ module.exports = PythonIndent =
     return unless bracketStack.length
 
     # bracketStack.pop()[1] is the column where the bracket was, so need to bump by one
-    indentColumn = bracketStack.pop()[1] + 1
+    indentColumn = bracketStack.pop() + 1
 
     # Get tab length for context
     tabLength = editor.getTabLength()
@@ -92,8 +92,8 @@ module.exports = PythonIndent =
 
 
   parseLines: (lines) ->
-    # bracketStack is a stack of [row, column] arrays indicating the
-    # location of the opening bracket (square, curly, or parentheses)
+    # bracketStack is an array of columns indicating the location
+    # of the opening bracket (square, curly, or parentheses)
     bracketStack = []
     # if we are in a string, this tells us what character introduced the string
     # i.e., did this string start with ' or with "?
@@ -125,7 +125,7 @@ module.exports = PythonIndent =
                 if c == '#'
                     break
                 if c in '[({'
-                    bracketStack.push([row, col])
+                    bracketStack.push(col)
                 if c in '})]'
                     bracketStack.pop()
                 if c in '\'"'
