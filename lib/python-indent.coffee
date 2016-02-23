@@ -49,6 +49,10 @@ module.exports = PythonIndent =
     row = editor.getCursorBufferPosition().row
     col = editor.getCursorBufferPosition().column
 
+    if row and PythonIndent.hangingIndentRegex.test(editor.buffer.lineForRow(row - 1))
+        PythonIndent.indentHanging(editor, row, editor.buffer.lineForRow(row - 1))
+        return
+
     # Parse the entire file up to the current point, keeping track of brackets
     lines = editor.getTextInBufferRange([[0,0], [row, col]]).split('\n')
 
@@ -102,7 +106,7 @@ module.exports = PythonIndent =
     # NOTE: this parsing will only be correct if the python code is well-formed
     #       statements like "[0, (1, 2])" might break the parsing
 
-    # loop over each line, adding to each stack
+    # loop over each line
     for row in [0 .. lines.length-1]
         line = lines[row]
 
@@ -131,5 +135,11 @@ module.exports = PythonIndent =
                 if c in '\'"'
                     stringDelimiter = c
 
-    # return the stacks as an array
     return bracketStack
+
+  indentHanging: (editor, row, previousLine) ->
+    # Indent at the current block level plus the setting amount (1 or 2)
+    indent = (editor.indentationForBufferRow row) + (atom.config.get 'python-indent.hangingIndentTabs')
+
+    # Set the indent
+    editor.setIndentationForBufferRow row, indent

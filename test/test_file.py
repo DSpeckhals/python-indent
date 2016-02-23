@@ -38,6 +38,10 @@ x = ['here(\'(', 'is', 'a',
      r'some \[\'[of which are raw',
      'and some of which are not']
 
+x = [
+    0, 1, 2
+]
+
 
 def f(arg1, arg2, arg3,
       arg4, arg5, arg6=')\)',
