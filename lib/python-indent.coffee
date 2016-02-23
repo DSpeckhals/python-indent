@@ -82,11 +82,12 @@ module.exports = PythonIndent =
 
     # openBracketStack.pop()[1] is the column where the bracket was, so need to bump by one
     lastOpenBracketLocations = openBracketStack.pop()
-    if lastOpenBracketLocations[0] < row - 1
-        # The bracket was opened before the previous line,
-        # we should use whatever indent we are given.
-        # This will correctly handle hanging indents.
-        return
+    # TODO: how to correctly identify a hanging indent...
+    # if lastOpenBracketLocations[0] < row - 1
+    #     # The bracket was opened before the previous line,
+    #     # we should use whatever indent we are given.
+    #     # This will correctly handle hanging indents.
+    #     return
     indentColumn = lastOpenBracketLocations[1] + 1
 
     # Get tab length for context
