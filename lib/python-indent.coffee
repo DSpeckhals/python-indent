@@ -123,16 +123,16 @@ module.exports = PythonIndent =
                 else
                     if c == stringDelimiter
                         stringDelimiter = []
-                    if c == '\\'
+                    else if c == '\\'
                         isEscaped = true
             else
                 if c == '#'
                     break
-                if c in '[({'
+                else if c in '[({'
                     bracketStack.push(col)
-                if c in '})]'
+                else if c in '})]'
                     bracketStack.pop()
-                if c in '\'"'
+                else if c in '\'"'
                     stringDelimiter = c
 
     return bracketStack
