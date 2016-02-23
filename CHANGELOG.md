@@ -1,4 +1,6 @@
 ## 0.3.4 - Improve Hanging Indent Behavior
+- Major refactor to better modularize components.
+- Allow for whitespace after a comma in a list. This fixed #6.
 - Remove fringe functionality introduced in `0.3.0` that caused newlines to not be created when text was on the next line.
 
 ## 0.3.3 - Support All Python-Based Grammars

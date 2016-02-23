@@ -1,9 +1,10 @@
 describe 'python-indent', ->
-  {properlyIndent} = require '../lib/python-indent'
+  PythonIndent = require '../lib/python-indent'
   grammar = 'Python'
   FILE_NAME = 'fixture.py'
   editor = null
   buffer = null
+  pythonIndent = null
 
   beforeEach ->
     waitsForPromise ->
@@ -25,7 +26,8 @@ describe 'python-indent', ->
         atom.packages.activatePackage languagePackage
 
     waitsForPromise ->
-      atom.packages.activatePackage 'python-indent'
+      atom.packages.activatePackage('python-indent').then ->
+        pythonIndent = new PythonIndent()
 
   describe 'package', ->
     it 'loads python file and package', ->
@@ -39,27 +41,27 @@ describe 'python-indent', ->
 
       it 'indents after open def params', ->
         editor.insertText 'def test(param_a, param_b, param_c,\n'
-        properlyIndent()
+        pythonIndent.properlyIndent()
         expect(buffer.lineForRow(1)).toBe ' '.repeat 9
 
       it 'indents after open tuple', ->
         editor.insertText 'tup = (True, False,\n'
-        properlyIndent()
+        pythonIndent.properlyIndent()
         expect(buffer.lineForRow(1)).toBe ' '.repeat 7
 
       it 'indents after open bracket', ->
         editor.insertText 'a_list = ["1", "2",\n'
-        properlyIndent()
+        pythonIndent.properlyIndent()
         expect(buffer.lineForRow(1)).toBe ' '.repeat 10
 
       it 'does not do any special indentation when delimiter is closed', ->
         editor.insertText 'def test(param_a, param_b, param_c):\n'
-        properlyIndent()
+        pythonIndent.properlyIndent()
         expect(buffer.lineForRow(1)).toBe ''
 
       it 'keeps indentation on succeding open lines', ->
         editor.insertText 'def test(param_a,\n'
-        properlyIndent()
+        pythonIndent.properlyIndent()
         editor.insertText 'param_b,\n'
         editor.autoIndentSelectedRows(2)
         expect(buffer.lineForRow(2)).toBe ' '.repeat 9
@@ -68,37 +70,37 @@ describe 'python-indent', ->
         editor.insertText 'class TheClass(object):\n'
         editor.autoIndentSelectedRows(1)
         editor.insertText 'def test(param_a, param_b,\n'
-        properlyIndent()
+        pythonIndent.properlyIndent()
         editor.insertText 'param_c):\n'
-        properlyIndent()
+        pythonIndent.properlyIndent()
         expect(buffer.lineForRow(3)).toBe ' '.repeat 8
 
         editor.insertText 'a_list = ["1", "2", "3",\n'
-        properlyIndent()
+        pythonIndent.properlyIndent()
         editor.insertText('"4"]\n')
-        properlyIndent()
+        pythonIndent.properlyIndent()
         expect(buffer.lineForRow(5)).toBe ' '.repeat 8
 
     describe 'when unindenting after newline :: aligned with opening delimiter', ->
       it 'unindents after close def params', ->
         editor.insertText 'def test(param_a,\n'
-        properlyIndent()
+        pythonIndent.properlyIndent()
         editor.insertText 'param_b):\n'
-        properlyIndent()
+        pythonIndent.properlyIndent()
         expect(buffer.lineForRow(2)).toBe ' '.repeat 4
 
       it 'unindents after close tuple', ->
         editor.insertText 'tup = (True, False,\n'
-        properlyIndent()
+        pythonIndent.properlyIndent()
         editor.insertText 'False)\n'
-        properlyIndent()
+        pythonIndent.properlyIndent()
         expect(buffer.lineForRow(2)).toBe ''
 
       it 'unindents after close bracket', ->
         editor.insertText 'a_list = ["1", "2",\n'
-        properlyIndent()
+        pythonIndent.properlyIndent()
         editor.insertText '"3"]\n'
-        properlyIndent()
+        pythonIndent.properlyIndent()
         expect(buffer.lineForRow(2)).toBe ''
 
   # Hanging
@@ -108,22 +110,22 @@ describe 'python-indent', ->
 
       it 'hanging indents after open def params', ->
         editor.insertText 'def test(\n'
-        properlyIndent()
+        pythonIndent.properlyIndent()
         expect(buffer.lineForRow(1)).toBe ' '.repeat 4
 
       it 'indents after open tuple', ->
         editor.insertText 'tup = (\n'
-        properlyIndent()
+        pythonIndent.properlyIndent()
         expect(buffer.lineForRow(1)).toBe ' '.repeat 4
 
       it 'indents after open bracket', ->
         editor.insertText 'a_list = [\n'
-        properlyIndent()
+        pythonIndent.properlyIndent()
         expect(buffer.lineForRow(1)).toBe ' '.repeat 4
 
       it 'indentation on succeding open lines', ->
         editor.insertText 'def test(\n'
-        properlyIndent()
+        pythonIndent.properlyIndent()
         editor.insertText 'param_a,\n'
         editor.autoIndentSelectedRows(2)
         editor.insertText 'param_b,\n'
@@ -134,7 +136,7 @@ describe 'python-indent', ->
         editor.insertText 'class TheClass(object):\n'
         editor.autoIndentSelectedRows(1)
         editor.insertText 'def test(\n'
-        properlyIndent()
+        pythonIndent.properlyIndent()
         editor.insertText 'param_a, param_b,\n'
         editor.autoIndentSelectedRows(3)
         editor.insertText 'param_c):\n'
@@ -142,7 +144,7 @@ describe 'python-indent', ->
         expect(buffer.lineForRow(4)).toBe ' '.repeat 4
 
         editor.insertText 'a_list = [\n'
-        properlyIndent()
+        pythonIndent.properlyIndent()
         editor.insertText '"1", "2", "3",\n'
         editor.autoIndentSelectedRows(6)
         editor.insertText('"4"]\n')
