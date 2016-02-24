@@ -3,21 +3,10 @@
 # TODO: handle hard indents, which CAN also have spaces in them (!!!)
 #       see "stopRange" in "properlyIndent"
 # TODO: do we want to over-ride atom's default behavior inside multi-line strings?
+# TODO: do we want to de-dent after a "return" statement? When would that be incorrect?
 
 module.exports = PythonIndent =
   config:
-    openingDelimiterIndentRegex:
-      type: 'string'
-      default: '^.*(\\(|\\[).*,\\s*$'
-      description: 'Regular Expression for _aligned with opening delimiter_ continuation indent type, and used for determining when this type of indent should be _started_.'
-    openingDelimiterUnindentRegex:
-      type: 'string'
-      default: '^\\s+\\S*(\\)|\\])\\s*:?\\s*$'
-      description: 'Regular Expression for _aligned with opening delimiter_ continuation indent type, and used for determining when this type of indent should be _ended_.'
-    hangingIndentRegex:
-      type: 'string'
-      default: '^.*(\\(|\\[)\\s*$'
-      description: 'Regular Expression for _hanging indent_ used for determining when this type of indent should be _started_.'
     hangingIndentTabs:
       type: 'number'
       default: 1
@@ -30,11 +19,6 @@ module.exports = PythonIndent =
   activate: ->
     @subscriptions = new CompositeDisposable
     @subscriptions.add atom.commands.add 'atom-text-editor', 'editor:newline': => @properlyIndent(event)
-
-    # Cache settings
-    @openingDelimiterIndentRegex = new RegExp(atom.config.get 'python-indent.openingDelimiterIndentRegex')
-    @openingDelimiterUnindentRegex = new RegExp(atom.config.get 'python-indent.openingDelimiterUnindentRegex')
-    @hangingIndentRegex = new RegExp(atom.config.get 'python-indent.hangingIndentRegex')
 
   deactivate: ->
     @subscriptions.dispose()
@@ -49,18 +33,17 @@ module.exports = PythonIndent =
     col = editor.getCursorBufferPosition().column
 
     # Parse the entire file up to the current point, keeping track of brackets
-    console.log(row, col)
     lines = editor.getTextInBufferRange([[0,0], [row, col]]).split('\n')
-    lines = lines.splice(0,lines.length-1)
     # at this point, the newline character has just been added,
     # so remove the last element of lines, which will be the empty line
+    lines = lines.splice(0,lines.length-1)
 
     # A stack of [row, col] pairs describing where open brackets are
-    output = PythonIndent.parseLines(lines)
-    openBracketStack = output[0]
-    closeBracketStack = output[1]
-    shouldHang = output[2]
-    lastFunctionRow = output[3]
+    parseOutput = PythonIndent.parseLines(lines)
+    openBracketStack = parseOutput.openBracketStack
+    closeBracketStack = parseOutput.closeBracketStack
+    shouldHang = parseOutput.shouldHang
+    lastFunctionRow = parseOutput.lastFunctionRow
 
     if shouldHang
         console.log('here')
@@ -187,7 +170,14 @@ module.exports = PythonIndent =
                     else if c in '\'"'
                         stringDelimiter = c
 
-    return [openBracketStack, closeBracketStack, shouldHang, lastFunctionRow]
+    # What's the javascript/coffeescript way to return a lot of outputs?
+    # Is this fine?
+    output = {}
+    output.openBracketStack = openBracketStack
+    output.closeBracketStack = closeBracketStack
+    output.shouldHang = shouldHang
+    output.lastFunctionRow = lastFunctionRow
+    return output
 
   indentHanging: (editor, row, previousLine) ->
     # Indent at the current block level plus the setting amount (1 or 2)
