@@ -39,8 +39,17 @@ x = ['here(\'(', 'is', 'a',
      'and some of which are not']
 
 x = [
-    0, 1, 2
+    0, 1, 2,
+    3, 4, 5
 ]
+
+# [
+
+# (
+
+# {
+
+# def f():
 
 
 def f(arg1, arg2, arg3,

@@ -1,9 +1,8 @@
 {CompositeDisposable} = require 'atom'
 
-# TODO: handle hanging indents
 # TODO: handle hard indents, which CAN also have spaces in them (!!!)
 #       see "stopRange" in "properlyIndent"
-# TODO: unindent back to previous level after all brackets have been closed
+# TODO: do we want to over-ride atom's default behavior inside multi-line strings?
 
 module.exports = PythonIndent =
   config:
@@ -49,17 +48,24 @@ module.exports = PythonIndent =
     row = editor.getCursorBufferPosition().row
     col = editor.getCursorBufferPosition().column
 
-    if row and PythonIndent.hangingIndentRegex.test(editor.buffer.lineForRow(row - 1))
-        PythonIndent.indentHanging(editor, row, editor.buffer.lineForRow(row - 1))
-        return
-
     # Parse the entire file up to the current point, keeping track of brackets
+    console.log(row, col)
     lines = editor.getTextInBufferRange([[0,0], [row, col]]).split('\n')
+    lines = lines.splice(0,lines.length-1)
+    # at this point, the newline character has just been added,
+    # so remove the last element of lines, which will be the empty line
 
     # A stack of [row, col] pairs describing where open brackets are
-    stacks = PythonIndent.parseLines(lines)
-    openBracketStack = stacks[0]
-    closeBracketStack = stacks[1]
+    output = PythonIndent.parseLines(lines)
+    openBracketStack = output[0]
+    closeBracketStack = output[1]
+    shouldHang = output[2]
+    lastFunctionRow = output[3]
+
+    if shouldHang
+        console.log('here')
+        PythonIndent.indentHanging(editor, row, editor.buffer.lineForRow(row - 1))
+        return
 
     return unless openBracketStack.length or closeBracketStack.length
 
@@ -67,27 +73,28 @@ module.exports = PythonIndent =
         # can assume closeBracketStack is not empty
         lastClosedBracketLocations = closeBracketStack.pop()
         if lastClosedBracketLocations[1] == row-1
+            console.log(lastFunctionRow)
+            console.log(row)
             # we just closed a bracket on the row, get indentation from the
             # row where it was opened
             indentLevel = editor.indentationForBufferRow(lastClosedBracketLocations[0])
 
-            # TODO: handle comments/multi-line strings that contain colons
-            functionDefinitionRegex = new RegExp('.*\\s*:\\s*$')
-            if lines.length > 1 and functionDefinitionRegex.test(lines.splice(-2)[0])
+            if lastFunctionRow == row-1
                 # we just finished defining a function, need to increase indentation
                 indentLevel += 1
 
             editor.setIndentationForBufferRow(row, indentLevel)
         return
 
-    # openBracketStack.pop()[1] is the column where the bracket was, so need to bump by one
     lastOpenBracketLocations = openBracketStack.pop()
-    # TODO: how to correctly identify a hanging indent...
-    # if lastOpenBracketLocations[0] < row - 1
-    #     # The bracket was opened before the previous line,
-    #     # we should use whatever indent we are given.
-    #     # This will correctly handle hanging indents.
-    #     return
+    if lastOpenBracketLocations[0] < row - 1 and (not closeBracketStack.length or closeBracketStack.pop()[1] != row-1)
+        # The bracket was opened before the previous line,
+        # and we did not just close a bracket,
+        # we should use whatever indent we are given.
+        # This will correctly handle continued hanging indents.
+        return
+
+    # lastOpenBracketLocations[1] is the column where the bracket was, so need to bump by one
     indentColumn = lastOpenBracketLocations[1] + 1
 
     # Get tab length for context
@@ -99,7 +106,6 @@ module.exports = PythonIndent =
 
     # If there's a remainder, `editor.buildIndentString` requires the tab to
     # be set past the desired indentation level, thus the ceiling.
-    # TODO: is the conditional necessary? Maybe to avoid floating point errors?
     tabs = if rem > 0 then Math.ceil tabs else tabs
 
     # Offset is the number of spaces to subtract from the soft-tabs if they
@@ -132,6 +138,8 @@ module.exports = PythonIndent =
     # if we are in a string, this tells us what character introduced the string
     # i.e., did this string start with ' or with "?
     stringDelimiter = []
+    # this is the row of the last function definition
+    lastFunctionRow = NaN
 
     # NOTE: this parsing will only be correct if the python code is well-formed
     #       statements like "[0, (1, 2])" might break the parsing
@@ -143,7 +151,10 @@ module.exports = PythonIndent =
         # boolean, whether or not the current character is being escaped
         isEscaped = false
 
-        for col in [0 .. line.length-1]
+        # true if we should have a hanging indent, false o/w
+        shouldHang = false
+
+        for col in [0 .. line.length-1] by 1
             c = line[col]
 
             # if stringDelimiter is set, then we are in a string
@@ -157,16 +168,26 @@ module.exports = PythonIndent =
                     else if c == '\\'
                         isEscaped = true
             else
-                if c == '#'
-                    break
-                else if c in '[({'
+                if c in '[({'
                     openBracketStack.push([row, col])
-                else if c in '})]'
-                    closeBracketStack.push([openBracketStack.pop()[0], row])
-                else if c in '\'"'
-                    stringDelimiter = c
+                    shouldHang = true
+                else if c in ' \t\r\n'
+                    # if it's whitespace, we don't care at all
+                    continue
+                else
+                    # we've already skipped if the character was white-space,
+                    # so that means we need to turn off hanging indent
+                    shouldHang = false
+                    if c == '#'
+                        break
+                    else if c == ':'
+                        lastFunctionRow = row
+                    else if c in '})]'
+                        closeBracketStack.push([openBracketStack.pop()[0], row])
+                    else if c in '\'"'
+                        stringDelimiter = c
 
-    return [openBracketStack, closeBracketStack]
+    return [openBracketStack, closeBracketStack, shouldHang, lastFunctionRow]
 
   indentHanging: (editor, row, previousLine) ->
     # Indent at the current block level plus the setting amount (1 or 2)
