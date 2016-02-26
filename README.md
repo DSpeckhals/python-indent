@@ -31,10 +31,7 @@ Both indent types for continuing lines as described in [PEP 0008 -- Style Guide 
           param_6)
       ```
 
-### Settings
-- __Aligned With Opening Delimiter Indent Regex__: Regular Expression for _aligned with opening delimiter_ continuation indent type, and used for determining when this type of indent should be _started_..
-- __Aligned With Opening Delimiter Unindent Regex__: Regular Expression for _aligned with opening delimiter_ continuation indent type, and used for determining when this type of indent should be _ended_.
-- __Hanging Indent Regex__: Regular Expression for _hanging indent_ used for determining when this type of indent should be _started_.
+### Setting
 - __Hanging Indent Tabs__: Number of tabs used for _hanging_ indents
 
 ### Examples
