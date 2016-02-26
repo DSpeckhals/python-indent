@@ -36,33 +36,32 @@ module.exports = PythonIndent =
     lines = editor.getTextInBufferRange([[0,0], [row, col]]).split('\n')
     # at this point, the newline character has just been added,
     # so remove the last element of lines, which will be the empty line
-    lines = lines.splice(0,lines.length-1)
+    lines = lines.splice(0, lines.length - 1)
 
-    # A stack of [row, col] pairs describing where open brackets are
     parseOutput = PythonIndent.parseLines(lines)
+    # A stack of [row, col] pairs describing where open brackets are
     openBracketStack = parseOutput.openBracketStack
-    closeBracketStack = parseOutput.closeBracketStack
+    # Either empty, or an array [rowOpen, rowClose] describing the rows
+    # where the last bracket to be closed was opened and closed.
+    lastClosedRow = parseOutput.lastClosedRow
+    # A stack containing the row number where each bracket was closed.
     shouldHang = parseOutput.shouldHang
     lastFunctionRow = parseOutput.lastFunctionRow
 
     if shouldHang
-        console.log('here')
         PythonIndent.indentHanging(editor, row, editor.buffer.lineForRow(row - 1))
         return
 
-    return unless openBracketStack.length or closeBracketStack.length
+    return unless openBracketStack.length or lastClosedRow.length
 
     if not openBracketStack.length
         # can assume closeBracketStack is not empty
-        lastClosedBracketLocations = closeBracketStack.pop()
-        if lastClosedBracketLocations[1] == row-1
-            console.log(lastFunctionRow)
-            console.log(row)
+        if lastClosedRow[1] == row - 1
             # we just closed a bracket on the row, get indentation from the
             # row where it was opened
-            indentLevel = editor.indentationForBufferRow(lastClosedBracketLocations[0])
+            indentLevel = editor.indentationForBufferRow(lastClosedRow[0])
 
-            if lastFunctionRow == row-1
+            if lastFunctionRow == row - 1
                 # we just finished defining a function, need to increase indentation
                 indentLevel += 1
 
@@ -70,7 +69,7 @@ module.exports = PythonIndent =
         return
 
     lastOpenBracketLocations = openBracketStack.pop()
-    if lastOpenBracketLocations[0] < row - 1 and (not closeBracketStack.length or closeBracketStack.pop()[1] != row-1)
+    if lastOpenBracketLocations[0] < row - 1 and (not lastClosedRow.length or lastClosedRow[1] != row - 1)
         # The bracket was opened before the previous line,
         # and we did not just close a bracket,
         # we should use whatever indent we are given.
@@ -114,10 +113,9 @@ module.exports = PythonIndent =
     # openBracketStack is an array of [row, col] indicating the location
     # of the opening bracket (square, curly, or parentheses)
     openBracketStack = []
-    # closeBracketStack is an array of [rowOpen, rowClose] describing the
-    # row where the bracket was opened, and the row where the bracket was closed.
-    # The top of the stack is the last bracket-pair to be closed.
-    closeBracketStack = []
+    # lastClosedRow is either empty or [rowOpen, rowClose] describing the
+    # rows where the latest closed bracket was opened and closed.
+    lastClosedRow = []
     # if we are in a string, this tells us what character introduced the string
     # i.e., did this string start with ' or with "?
     stringDelimiter = []
@@ -128,56 +126,78 @@ module.exports = PythonIndent =
     #       statements like "[0, (1, 2])" might break the parsing
 
     # loop over each line
-    for row in [0 .. lines.length-1]
+    for row in [0 .. lines.length - 1]
         line = lines[row]
 
         # boolean, whether or not the current character is being escaped
+        # applicable when we are currently in a string
         isEscaped = false
 
-        # true if we should have a hanging indent, false o/w
+        # true if we should have a hanging indent, false otherwise
         shouldHang = false
 
-        for col in [0 .. line.length-1] by 1
+        for col in [0 .. line.length - 1] by 1
             c = line[col]
 
             # if stringDelimiter is set, then we are in a string
             # Note that this works correctly even for triple quoted strings
             if stringDelimiter.length
                 if isEscaped
+                    # If current character is escaped, then we do not care what it was,
+                    # but since it is impossible for the next character to be escaped as well,
+                    # go ahead and set that to false
                     isEscaped = false
                 else
                     if c == stringDelimiter
+                        # We are seeing the same quote that started the string, i.e. ' or ",
+                        # so we are no longer in a string. Note that this will work perfectly
+                        # well for triple quoted strings since there are an odd number of quotes
+                        # at the beginning and ending. Someone had parsers in mind when they
+                        # decided that...
                         stringDelimiter = []
                     else if c == '\\'
+                        # We are seeing an unescaped backslash, the next character is escaped.
+                        # Note that this is not exactly true in raw strings, HOWEVER, in raw strings
+                        # you can still escape the quote mark by using a backslash. Since that's all
+                        # we really care about as far as escaped characters go, we can go ahead and
+                        # assume we are now escaping the next character.
                         isEscaped = true
             else
                 if c in '[({'
                     openBracketStack.push([row, col])
+                    # If the only characters after this opening bracket are whitespace,
+                    # then we should do a hanging indent. If there are other non-whitespace
+                    # characters after this, then they will set the shouldHang boolean to false
                     shouldHang = true
-                else if c in ' \t\r\n'
+                else if c in ' \t\r\n' # shouldn't see a newline in here, but just in case...
                     # if it's whitespace, we don't care at all
+                    # this check is necessary so we don't set shouldHang to false even if someone
+                    # e.g. just entered a space between the opening bracket and the newline.
                     continue
+                else if c == '#'
+                    # this check goes as well to make sure we don't set shouldHang
+                    # to false in similar circumstances as described in the whitespace section.
+                    break
                 else
-                    # we've already skipped if the character was white-space,
-                    # so that means we need to turn off hanging indent
+                    # we've already skipped if the character was white-space, an opening bracket,
+                    # or a new line, so that means the current character is not whitespace and
+                    # not an opening bracket, so shouldHang needs to get set to false.
                     shouldHang = false
-                    if c == '#'
-                        break
-                    else if c == ':'
+                    if c == ':'
                         lastFunctionRow = row
                     else if c in '})]'
-                        closeBracketStack.push([openBracketStack.pop()[0], row])
+                        # Note that the .pop() will take the element off of the openBracketStack
+                        # as it adds it to the array for lastClosedRow.
+                        lastClosedRow = [openBracketStack.pop()[0], row]
                     else if c in '\'"'
+                        # starting a string, keep track of what quote was used to start it.
                         stringDelimiter = c
 
-    # What's the javascript/coffeescript way to return a lot of outputs?
-    # Is this fine?
-    output = {}
-    output.openBracketStack = openBracketStack
-    output.closeBracketStack = closeBracketStack
-    output.shouldHang = shouldHang
-    output.lastFunctionRow = lastFunctionRow
-    return output
+    return {} =
+        openBracketStack: openBracketStack
+        lastClosedRow: lastClosedRow
+        shouldHang: shouldHang
+        lastFunctionRow: lastFunctionRow
 
   indentHanging: (editor, row, previousLine) ->
     # Indent at the current block level plus the setting amount (1 or 2)
