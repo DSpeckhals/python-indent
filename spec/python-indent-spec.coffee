@@ -57,7 +57,7 @@ describe 'python-indent', ->
       it 'does not do any special indentation when delimiter is closed', ->
         editor.insertText 'def test(param_a, param_b, param_c):\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(1)).toBe ''
+        expect(buffer.lineForRow(1)).toBe ' '.repeat 4
 
       it 'keeps indentation on succeding open lines', ->
         editor.insertText 'def test(param_a,\n'

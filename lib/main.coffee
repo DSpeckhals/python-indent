@@ -3,18 +3,6 @@ PythonIndent = require './python-indent'
 
 module.exports =
   config:
-    openingDelimiterIndentRegex:
-      type: 'string'
-      default: '^.*(\\(|\\[).*,\\s*$'
-      description: 'Regular Expression for _aligned with opening delimiter_ continuation indent type, and used for determining when this type of indent should be _started_.'
-    openingDelimiterUnindentRegex:
-      type: 'string'
-      default: '^\\s+\\S*(\\)|\\])\\s*:?\\s*$'
-      description: 'Regular Expression for _aligned with opening delimiter_ continuation indent type, and used for determining when this type of indent should be _ended_.'
-    hangingIndentRegex:
-      type: 'string'
-      default: '^.*(\\(|\\[)\\s*$'
-      description: 'Regular Expression for _hanging indent_ used for determining when this type of indent should be _started_.'
     hangingIndentTabs:
       type: 'number'
       default: 1
