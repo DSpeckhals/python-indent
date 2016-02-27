@@ -136,6 +136,9 @@ module.exports = PythonIndent =
         # true if we should have a hanging indent, false otherwise
         shouldHang = false
 
+        # this is the last defined function row
+        lastLastFunctionRow = lastFunctionRow
+
         for col in [0 .. line.length - 1] by 1
             c = line[col]
 
@@ -183,6 +186,14 @@ module.exports = PythonIndent =
                     # or a new line, so that means the current character is not whitespace and
                     # not an opening bracket, so shouldHang needs to get set to false.
                     shouldHang = false
+
+                    # Similar to above, we've already skipped all irrelevant characters,
+                    # so if we saw a colon earlier in this line, then we would have
+                    # incorrectly thought it was the end of a function definition when
+                    # it was actually a dictionary being defined, reset the lastFunctionRow
+                    # variable to whatever it was when we started parsing this line.
+                    lastFunctionRow = lastLastFunctionRow
+
                     if c == ':'
                         lastFunctionRow = row
                     else if c in '})]'
