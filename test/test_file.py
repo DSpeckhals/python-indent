@@ -38,6 +38,20 @@ x = ['here(\'(', 'is', 'a',
      r'some \[\'[of which are raw',
      'and some of which are not']
 
+def test(param_a, param_b, param_c,
+         param_d):
+    pass
+
+def test(param_a,
+         param_b,
+         param_c):
+    pass
+
+class TheClass(object):
+    def test(param_a, param_b,
+             param_c):
+        a_list = ["1", "2", "3",
+                  "4"]
 x = [
     0, 1, 2,
     3, 4, 5
