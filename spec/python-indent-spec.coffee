@@ -244,6 +244,11 @@ describe 'python-indent', ->
         pythonIndent.properlyIndent()
         expect(buffer.lineForRow(2)).toBe ''
 
+      it 'unindents after close curly brace', ->
+        editor.insertText 'a_dict = {0: 0}\n'
+        pythonIndent.properlyIndent()
+        expect(buffer.lineForRow(1)).toBe ''
+
   # Hanging
   describe 'hanging', ->
 
