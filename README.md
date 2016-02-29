@@ -46,8 +46,8 @@ def with_python_indend_packgage_added(first_parameter, second_parameter,
     #<--properly unindents to here
     pass
 
-def with_hanging_indent(first_parameter, second_parameter,
-    third_parameter):
+def with_hanging_indent(
+    first_parameter, second_parameter, third_parameter):
     pass
 
 also_works_with_lists = ["apples", "oranges", "pears", "peaches", "mangoes",

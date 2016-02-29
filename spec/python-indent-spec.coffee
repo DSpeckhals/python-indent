@@ -47,7 +47,7 @@ describe 'python-indent', ->
       it 'indents after open def params', ->
         editor.insertText 'def test(param_a, param_b, param_c,\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(1)).toBe ' '.repeat 9
+        expect(buffer.lineForRow 1).toBe ' '.repeat 9
 
       '''
       x = [0, 1, 2,
@@ -56,7 +56,7 @@ describe 'python-indent', ->
       it 'indents after open bracket with multiple values on the first line', ->
         editor.insertText 'x = [0, 1, 2,\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(1)).toBe ' '.repeat 5
+        expect(buffer.lineForRow 1).toBe ' '.repeat 5
 
       '''
       x = [0,
@@ -65,7 +65,7 @@ describe 'python-indent', ->
       it 'indents after open bracket with one value on the first line', ->
         editor.insertText 'x = [0,\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(1)).toBe ' '.repeat 5
+        expect(buffer.lineForRow 1).toBe ' '.repeat 5
 
       '''
       x = [0, 1, 2, [3, 4, 5,
@@ -74,7 +74,7 @@ describe 'python-indent', ->
       it 'indeents in nested lists when inner list is on the same line', ->
         editor.insertText 'x = [0, 1, 2, [3, 4, 5,\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(1)).toBe ' '.repeat 15
+        expect(buffer.lineForRow 1).toBe ' '.repeat 15
 
       '''
       x = [0, 1, 2,
@@ -84,11 +84,11 @@ describe 'python-indent', ->
       it 'indeents in nested lists when inner list is on a new line', ->
         editor.insertText 'x = [0, 1, 2,\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(1)).toBe ' '.repeat 5
+        expect(buffer.lineForRow 1).toBe ' '.repeat 5
 
         editor.insertText '[3, 4, 5,\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(2)).toBe ' '.repeat 6
+        expect(buffer.lineForRow 2).toBe ' '.repeat 6
 
       '''
       x = (0, 1, 2,
@@ -97,7 +97,7 @@ describe 'python-indent', ->
       it 'indents after open tuple with multiple values on the first line', ->
         editor.insertText 'x = (0, 1, 2,\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(1)).toBe ' '.repeat 5
+        expect(buffer.lineForRow 1).toBe ' '.repeat 5
 
       '''
       x = (0,
@@ -106,7 +106,7 @@ describe 'python-indent', ->
       it 'indents after open tuple with one value on the first line', ->
         editor.insertText 'x = (0,\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(1)).toBe ' '.repeat 5
+        expect(buffer.lineForRow 1).toBe ' '.repeat 5
 
       '''
       x = (0, 1, 2, [3, 4, 5,
@@ -116,11 +116,11 @@ describe 'python-indent', ->
       it 'indents in nested lists when inner list is on a new line and a different type', ->
         editor.insertText 'x = (0, 1, 2, [3, 4, 5,\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(1)).toBe ' '.repeat 15
+        expect(buffer.lineForRow 1).toBe ' '.repeat 15
 
         editor.insertText '6, 7, 8],\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(2)).toBe ' '.repeat 5
+        expect(buffer.lineForRow 2).toBe ' '.repeat 5
 
       '''
       x = {0: 0, 1: 1,
@@ -129,7 +129,7 @@ describe 'python-indent', ->
       it 'indents dictionaries when multiple pairs are on the same line', ->
         editor.insertText 'x = {0: 0, 1: 1,\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(1)).toBe ' '.repeat 5
+        expect(buffer.lineForRow 1).toBe ' '.repeat 5
 
       '''
       x = {0: 0, 1: 1,
@@ -139,11 +139,11 @@ describe 'python-indent', ->
       it 'indents dictionaries with a list as a value', ->
         editor.insertText 'x = {0: 0, 1: 1,\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(1)).toBe ' '.repeat 5
+        expect(buffer.lineForRow 1).toBe ' '.repeat 5
 
         editor.insertText '2: 2, 3: 3, 4: [4, 4,\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(2)).toBe ' '.repeat 21
+        expect(buffer.lineForRow 2).toBe ' '.repeat 21
 
       '''
       s = '[ will this \'break \( the parsing?'
@@ -151,7 +151,7 @@ describe 'python-indent', ->
       it 'does not indent with delimiters that are quoted', ->
         editor.insertText 's = \'[ will this \\\'break \( the parsing?\'\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(1)).toBe ''
+        expect(buffer.lineForRow 1).toBe ''
 
       '''
       x = ['here(\'(', 'is', 'a',
@@ -163,19 +163,19 @@ describe 'python-indent', ->
       it 'knows when to indent when some delimiters are literal, and some are not', ->
         editor.insertText 'x = [\'here(\\\'(\', \'is\', \'a\',\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(1)).toBe ' '.repeat 5
+        expect(buffer.lineForRow 1).toBe ' '.repeat 5
 
         editor.insertText '\'list\', \'of\', [\'nested]\',\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(2)).toBe ' '.repeat 20
+        expect(buffer.lineForRow 2).toBe ' '.repeat 20
 
         editor.insertText '\'strings\\\\\'],\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(3)).toBe ' '.repeat 5
+        expect(buffer.lineForRow 3).toBe ' '.repeat 5
 
         editor.insertText 'r\'some \\[\\\'[of which are raw\',\n'
-        pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(4)).toBe ''
+        editor.autoIndentSelectedRows 4
+        expect(buffer.lineForRow 4).toBe ' '.repeat 5
 
       '''
       def test(param_a, param_b, param_c,
@@ -185,7 +185,7 @@ describe 'python-indent', ->
       it 'indents normally when delimiter is closed', ->
         editor.insertText 'def test(param_a, param_b, param_c):\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(1)).toBe ' '.repeat 4
+        expect(buffer.lineForRow 1).toBe ' '.repeat 4
 
       '''
       def test(param_a,
@@ -197,57 +197,93 @@ describe 'python-indent', ->
         editor.insertText 'def test(param_a,\n'
         pythonIndent.properlyIndent()
         editor.insertText 'param_b,\n'
-        editor.autoIndentSelectedRows(2)
-        expect(buffer.lineForRow(2)).toBe ' '.repeat 9
+        editor.autoIndentSelectedRows 2
+        expect(buffer.lineForRow 2).toBe ' '.repeat 9
 
       '''
       class TheClass(object):
           def test(param_a, param_b,
                    param_c):
-              a_list = ["1", "2", "3",
-                        "4"]
+              a_list = [1, 2, 3,
+                        4]
       '''
       it 'allows for fluid indent in multi-level situations', ->
         editor.insertText 'class TheClass(object):\n'
-        editor.autoIndentSelectedRows(1)
+        editor.autoIndentSelectedRows 1
         editor.insertText 'def test(param_a, param_b,\n'
         pythonIndent.properlyIndent()
         editor.insertText 'param_c):\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(3)).toBe ' '.repeat 8
+        expect(buffer.lineForRow 3).toBe ' '.repeat 8
 
-        editor.insertText 'a_list = ["1", "2", "3",\n'
+        editor.insertText 'a_list = [1, 2, 3,\n'
         pythonIndent.properlyIndent()
-        editor.insertText('"4"]\n')
+        editor.insertText('4]\n')
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(5)).toBe ' '.repeat 8
+        expect(buffer.lineForRow 5).toBe ' '.repeat 8
+
+      '''
+      def f(arg1, arg2, arg3,
+            arg4, arg5, arg6=')\)',
+            arg7=0):
+          return 0
+      '''
+      it 'indents properly when delimiters are an argument default string', ->
+        editor.insertText 'def f(arg1, arg2, arg3,\n'
+        pythonIndent.properlyIndent()
+        expect(buffer.lineForRow 1).toBe ' '.repeat 6
+
+        editor.insertText 'arg4, arg5, arg6=\')\\)\',\n'
+        editor.autoIndentSelectedRows 2
+        expect(buffer.lineForRow 2).toBe ' '.repeat 6
+
+        editor.insertText 'arg7=0):\n'
+        pythonIndent.properlyIndent()
+        expect(buffer.lineForRow 3).toBe ' '.repeat 4
 
     describe 'when unindenting after newline :: aligned with opening delimiter', ->
+
+      '''
+      def test(param_a,
+               param_b):
+          pass
+      '''
       it 'unindents after close def params', ->
         editor.insertText 'def test(param_a,\n'
         pythonIndent.properlyIndent()
         editor.insertText 'param_b):\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(2)).toBe ' '.repeat 4
+        expect(buffer.lineForRow 2).toBe ' '.repeat 4
 
+      '''
+      tup = (True, False,
+             False)
+      '''
       it 'unindents after close tuple', ->
         editor.insertText 'tup = (True, False,\n'
         pythonIndent.properlyIndent()
         editor.insertText 'False)\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(2)).toBe ''
+        expect(buffer.lineForRow 2).toBe ''
 
+      '''
+      a_list = [1, 2,
+                3]
+      '''
       it 'unindents after close bracket', ->
-        editor.insertText 'a_list = ["1", "2",\n'
+        editor.insertText 'a_list = [1, 2,\n'
         pythonIndent.properlyIndent()
-        editor.insertText '"3"]\n'
+        editor.insertText '3]\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(2)).toBe ''
+        expect(buffer.lineForRow 2).toBe ''
 
+      '''
+      a_dict = {0: 0}
+      '''
       it 'unindents after close curly brace', ->
         editor.insertText 'a_dict = {0: 0}\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(1)).toBe ''
+        expect(buffer.lineForRow 1).toBe ''
 
   # Hanging
   describe 'hanging', ->
@@ -262,7 +298,7 @@ describe 'python-indent', ->
       it 'hanging indents after open def params', ->
         editor.insertText 'def test(\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(1)).toBe ' '.repeat 4
+        expect(buffer.lineForRow 1).toBe ' '.repeat 4
 
       '''
       tup = (
@@ -272,7 +308,7 @@ describe 'python-indent', ->
       it 'indents after open tuple', ->
         editor.insertText 'tup = (\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(1)).toBe ' '.repeat 4
+        expect(buffer.lineForRow 1).toBe ' '.repeat 4
 
       '''
       a_list = [
@@ -282,7 +318,7 @@ describe 'python-indent', ->
       it 'indents after open bracket', ->
         editor.insertText 'a_list = [\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow(1)).toBe ' '.repeat 4
+        expect(buffer.lineForRow 1).toBe ' '.repeat 4
 
       '''
       def test(
@@ -295,10 +331,10 @@ describe 'python-indent', ->
         editor.insertText 'def test(\n'
         pythonIndent.properlyIndent()
         editor.insertText 'param_a,\n'
-        editor.autoIndentSelectedRows(2)
+        editor.autoIndentSelectedRows 2
         editor.insertText 'param_b,\n'
-        editor.autoIndentSelectedRows(3)
-        expect(buffer.lineForRow(3)).toBe ' '.repeat 4
+        editor.autoIndentSelectedRows 3
+        expect(buffer.lineForRow 3).toBe ' '.repeat 4
 
       '''
       class TheClass(object):
@@ -312,19 +348,63 @@ describe 'python-indent', ->
       '''
       it 'allows for indent in multi-level situations', ->
         editor.insertText 'class TheClass(object):\n'
-        editor.autoIndentSelectedRows(1)
+        editor.autoIndentSelectedRows 1
         editor.insertText 'def test(\n'
         pythonIndent.properlyIndent()
         editor.insertText 'param_a, param_b,\n'
-        editor.autoIndentSelectedRows(3)
+        editor.autoIndentSelectedRows 3
         editor.insertText 'param_c):\n'
-        editor.autoIndentSelectedRows(4)
-        expect(buffer.lineForRow(4)).toBe ' '.repeat 4
+        editor.autoIndentSelectedRows 4
+        expect(buffer.lineForRow 4).toBe ' '.repeat 4
 
         editor.insertText 'a_list = [\n'
         pythonIndent.properlyIndent()
         editor.insertText '"1", "2", "3",\n'
-        editor.autoIndentSelectedRows(6)
+        editor.autoIndentSelectedRows 6
         editor.insertText('"4"]\n')
-        editor.autoIndentSelectedRows(7)
-        expect(buffer.lineForRow(7)).toBe ' '.repeat 4
+        editor.autoIndentSelectedRows 7
+        expect(buffer.lineForRow 7).toBe ' '.repeat 4
+
+    describe 'when newline is in a comment', ->
+
+      '''
+      x = [  #
+          0
+      ]
+      '''
+      it 'indents when delimiter is not commented, but other characters are', ->
+        editor.insertText 'x = [ #\n'
+        pythonIndent.properlyIndent()
+        expect(buffer.lineForRow 1).toBe ' '.repeat 4
+
+      '''
+      # [
+      '''
+      it 'does not indent when bracket delimiter is commented', ->
+        editor.insertText '# [\n'
+        pythonIndent.properlyIndent()
+        expect(buffer.lineForRow 1).toBe ''
+
+      '''
+      # (
+      '''
+      it 'does not indent when parentheses delimiter is commented', ->
+        editor.insertText '# (\n'
+        pythonIndent.properlyIndent()
+        expect(buffer.lineForRow 1).toBe ''
+
+      '''
+      # {
+      '''
+      it 'does not indent when brace delimiter is commented', ->
+        editor.insertText '# {\n'
+        pythonIndent.properlyIndent()
+        expect(buffer.lineForRow 1).toBe ''
+
+      '''
+      # def f():
+      '''
+      it 'does not indent when function def is commented', ->
+        editor.insertText '# def f():\n'
+        pythonIndent.properlyIndent()
+        expect(buffer.lineForRow 1).toBe ''
