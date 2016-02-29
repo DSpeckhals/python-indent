@@ -408,3 +408,35 @@ describe 'python-indent', ->
         editor.insertText '# def f():\n'
         pythonIndent.properlyIndent()
         expect(buffer.lineForRow 1).toBe ''
+
+    describe 'when continuing a hanging indent after opening and closing bracket(s)', ->
+
+      '''
+      alpha = (
+          epsilon(),
+          gamma
+      )
+      '''
+      it 'continues correctly after bracket is opened and closed on same line', ->
+        editor.insertText 'alpha = (\n'
+        pythonIndent.properlyIndent()
+        editor.insertText 'epsilon(),\n'
+        pythonIndent.properlyIndent()
+        expect(buffer.lineForRow 2).tobe ' '.repeat(4)
+
+      '''
+      alpha = (
+          epsilon(arg1, arg2,
+                  arg3, arg4),
+          gamma
+      )
+      '''
+      it 'continues correctly after bracket is opened and closed on different lines', ->
+        editor.insertText 'alpha = (\n'
+        pythonIndent.properlyIndent()
+        editor.insertText 'epsilon(arg1, arg2,\n'
+        pythonIndent.properlyIndent()
+        expect(buffer.lineForRow 2).tobe ' '.repeat(12)
+        editor.insertText 'arg3, arg4),\n'
+        pythonIndent.properlyIndent()
+        expect(buffer.lineForRow 3).tobe ' '.repeat(4)
