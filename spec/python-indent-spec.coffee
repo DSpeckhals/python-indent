@@ -434,9 +434,11 @@ describe 'python-indent', ->
       it 'continues correctly after bracket is opened and closed on different lines', ->
         editor.insertText 'alpha = (\n'
         pythonIndent.properlyIndent()
+
         editor.insertText 'epsilon(arg1, arg2,\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow 2).tobe ' '.repeat(12)
+        expect(buffer.lineForRow 2).toBe ' '.repeat(12)
+
         editor.insertText 'arg3, arg4),\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow 3).tobe ' '.repeat(4)
+        expect(buffer.lineForRow 3).toBe ' '.repeat(4)
