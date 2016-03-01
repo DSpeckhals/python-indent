@@ -1,7 +1,7 @@
 {
   "name": "python-indent",
   "main": "./lib/main",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Python PEP8 auto-indentation",
   "author": "Dustin Speckhals <dustin1114@gmail.com>",
   "keywords": [
