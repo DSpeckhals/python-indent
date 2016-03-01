@@ -18,7 +18,7 @@ Both indent types for continuing lines as described in [PEP 0008 -- Style Guide 
     ```python
     def function_with_lots_of_params(param_1, param_2,
                                      param_3, param_4,
-                                     really_log_parameter_name,
+                                     really_long_parameter_name,
                                      param_6)
     ```
   - Hanging
@@ -27,7 +27,7 @@ Both indent types for continuing lines as described in [PEP 0008 -- Style Guide 
       def function_with_lots_of_params(
           param_1, param_2,
           param_3, param_4,
-          really_log_parameter_name,
+          really_long_parameter_name,
           param_6)
       ```
 
@@ -41,7 +41,7 @@ def current_language_python_package(first_parameter, second_parameter,#<newline>
 third_parameter):#<---default Atom language-python
     pass
 
-def with_python_indend_packgage_added(first_parameter, second_parameter,
+def with_python_indent_package_added(first_parameter, second_parameter,
                                       third_parameter):
     #<--properly unindents to here
     pass
@@ -51,7 +51,7 @@ def with_hanging_indent(
     pass
 
 also_works_with_lists = ["apples", "oranges", "pears", "peaches", "mangoes",
-                         "clementies", "etc."]#<--PEP8 continued indentation
+                         "clementines", "etc."]#<--PEP8 continued indentation
 or_like_this = [
     "apples", "oranges", "pears",
     "peaches", "mangoes", "clementines",

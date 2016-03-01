@@ -1,3 +1,7 @@
+## 0.4.1 - Hanging Indent Continuation Fix
+- Properly indent continuing lines in a hanging indent after closing a nested bracket pair. This fixed #15.
+- Improve test coverage.
+
 ## 0.4.0 - Major Improvements and Fixes
 ##### All improvements for this release are thanks to the incredible work of @kbrose!
 - Make indentation behave as expected in practically every scenario.
@@ -6,7 +10,7 @@
     is read, it adds to the stack indicating the column where the bracket is located, when a closing bracket (one of })]) is read, it pops
     the latest element (it does not do any checking to make sure the closing bracket matches the opening bracket - this is why it assumes
     the python source code is well-formed). If there is anything in the stack after parsing the python file up to the cursor location, then
-    that means there is an open bracket. We can see what column the mostrecent addition to the stack was on, and then set the indent from that.
+    that means there is an open bracket. We can see what column the most recent addition to the stack was on, and then set the indent from that.
 
 ## 0.3.4 - Improve Hanging Indent Behavior
 - Major refactor to better modularize components.

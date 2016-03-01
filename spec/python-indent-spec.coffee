@@ -422,7 +422,7 @@ describe 'python-indent', ->
         pythonIndent.properlyIndent()
         editor.insertText 'epsilon(),\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow 2).toBe ' '.repeat(4)
+        expect(buffer.lineForRow 2).toBe ' '.repeat 4
 
       '''
       alpha = (
@@ -437,8 +437,8 @@ describe 'python-indent', ->
 
         editor.insertText 'epsilon(arg1, arg2,\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow 2).toBe ' '.repeat(12)
+        expect(buffer.lineForRow 2).toBe ' '.repeat 12
 
         editor.insertText 'arg3, arg4),\n'
         pythonIndent.properlyIndent()
-        expect(buffer.lineForRow 3).toBe ' '.repeat(4)
+        expect(buffer.lineForRow 3).toBe ' '.repeat 4
