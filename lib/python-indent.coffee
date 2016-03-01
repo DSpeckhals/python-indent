@@ -38,7 +38,7 @@ class PythonIndent
     return unless openBracketStack.length or lastClosedRow.length
 
     if not openBracketStack.length
-        # can assume closeBracketStack is not empty
+        # can assume lastClosedRow is not empty
         if lastClosedRow[1] == row - 1
             # we just closed a bracket on the row, get indentation from the
             # row where it was opened
@@ -51,19 +51,58 @@ class PythonIndent
             @editor.setIndentationForBufferRow(row, indentLevel)
         return
 
-    lastOpenBracketLocations = openBracketStack.pop()
-    if lastOpenBracketLocations[0] < row - 1 and (not lastClosedRow.length or lastClosedRow[1] != row - 1)
-        # The bracket was opened before the previous line,
-        # and we did not just close a bracket,
-        # we should use whatever indent we are given.
-        # This will correctly handle continued hanging indents.
-        return
-
-    # lastOpenBracketLocations[1] is the column where the bracket was, so need to bump by one
-    indentColumn = lastOpenBracketLocations[1] + 1
-
      # Get tab length for context
     tabLength = @editor.getTabLength()
+
+    lastOpenBracketLocations = openBracketStack.pop()
+
+    # Get some booleans to help work through the cases
+
+    # haveClosedBracket is true if we have ever closed a bracket
+    haveClosedBracket = lastClosedRow.length
+    # justOpenedBracket is true if we opened a bracket on the row we just finished
+    justOpenedBracket = lastOpenBracketLocations[0] == row - 1
+    # justClosedBracket is true if we closed a bracket on the row we just finished
+    justClosedBracket = haveClosedBracket and lastClosedRow[1] == row - 1
+    # closedBracketOpenedAfterLineWithCurrentOpen is an ***extremely*** long name, and
+    # it is true if the most recently closed bracket pair was opened on
+    # a line AFTER the line where the current open bracket
+    closedBracketOpenedAfterLineWithCurrentOpen = haveClosedBracket and lastClosedRow[0] > lastOpenBracketLocations[0]
+
+    if not justOpenedBracket and not justClosedBracket
+        # The bracket was opened before the previous line,
+        # and we did not close a bracket on the previous line.
+        # Thus, nothing has happened that could have changed the
+        # indentation level since the previous line, so
+        # we should use whatever indent we are given.
+        return
+    else if justClosedBracket and closedBracketOpenedAfterLineWithCurrentOpen
+        # A bracket that was opened after the most recent open
+        # bracket was closed on the line we just finished typing.
+        # We should use whatever indent was used on the row
+        # where we opened the bracket we just closed. This needs
+        # to be handled as a separate case from the last case below
+        # in case the current bracket is using a hanging indent.
+        # This handles cases such as
+        # x = [0, 1, 2,
+        #      [3, 4, 5,
+        #       6, 7, 8],
+        #      9, 10, 11]
+        # which would be correctly handled by the case below, but it also correctly handles
+        # x = [
+        #     0, 1, 2, [3, 4, 5,
+        #               6, 7, 8],
+        #     9, 10, 11
+        # ]
+        # which the last case below would incorrectly indent an extra space
+        # before the "9", because it would try to match it up with the
+        # open bracket instead of using the hanging indent.
+        previousIndent = @editor.indentationForBufferRow(lastClosedRow[0])
+        indentColumn = previousIndent * tabLength
+    else
+        # lastOpenBracketLocations[1] is the column where the bracket was,
+        # so need to bump up the indentation by one
+        indentColumn = lastOpenBracketLocations[1] + 1
 
     # Calculate soft-tabs from spaces (can have remainder)
     tabs = (indentColumn / tabLength)

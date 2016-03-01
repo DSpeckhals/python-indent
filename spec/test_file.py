@@ -9,12 +9,17 @@ x = [0,
 x = [0, 1, 2, [3, 4, 5,
                6, 7, 8]]
 
+x = [[[0,1,2],
+      3,4,5],
+     6,7,8]
+
 x = [0, 1, 2,
      [3, 4, 5,
       6, 7, 8]]
 
 x = (0, 1, 2,
-     3, 4, 5)
+     3, 4, 5,
+     6, 7, 8)
 
 x = (0,
      1)
@@ -74,3 +79,21 @@ def f(arg1, arg2, arg3,
       arg4, arg5, arg6=')\)',
       arg7=0):
     return 0
+
+
+alpha = (
+    epsilon(),
+    gamma
+)
+
+alpha = (
+    epsilon(arg1, arg2,
+            arg3, arg4),
+    gamma
+)
+
+for i in range(10):
+    for j in range(20):
+        def f(x=[0,1,2,
+                 3,4,5]):
+            return x * i * j
