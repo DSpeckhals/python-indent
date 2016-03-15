@@ -1,3 +1,6 @@
+## 0.4.2 - Errors on Malformed Code
+- Don't throw error when source code is malformed. This fixed #17.
+
 ## 0.4.1 - Hanging Indent Continuation Fix
 - Properly indent continuing lines in a hanging indent after closing a nested bracket pair. This fixed #15.
 - Improve test coverage.

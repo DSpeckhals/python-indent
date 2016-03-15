@@ -97,3 +97,5 @@ for i in range(10):
         def f(x=[0,1,2,
                  3,4,5]):
             return x * i * j
+
+class DoesBadlyFormedCodeBreak )

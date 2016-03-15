@@ -35,7 +35,7 @@ class PythonIndent
         @indentHanging(row, @editor.buffer.lineForRow(row - 1))
         return
 
-    return unless openBracketStack.length or lastClosedRow.length
+    return unless openBracketStack.length or (lastClosedRow.length and openBracketStack)
 
     if not openBracketStack.length
         # can assume lastClosedRow is not empty
@@ -218,7 +218,7 @@ class PythonIndent
 
                     if c == ':'
                         lastFunctionRow = row
-                    else if c in '})]'
+                    else if c in '})]' and openBracketStack.length
                         # Note that the .pop() will take the element off of the openBracketStack
                         # as it adds it to the array for lastClosedRow.
                         lastClosedRow = [openBracketStack.pop()[0], row]
