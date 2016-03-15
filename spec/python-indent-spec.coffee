@@ -241,6 +241,30 @@ describe 'python-indent', ->
         pythonIndent.properlyIndent()
         expect(buffer.lineForRow 3).toBe ' '.repeat 4
 
+      '''
+      for i in range(10):
+          for j in range(20):
+              def f(x=[0,1,2,
+                       3,4,5]):
+                  return x * i * j
+      '''
+      it 'indents properly when blocks and lists are deeply nested', ->
+        editor.insertText 'for i in range(10):\n'
+        pythonIndent.properlyIndent()
+        expect(buffer.lineForRow 1).toBe ' '.repeat 4
+
+        editor.insertText 'for j in range(20):\n'
+        editor.autoIndentSelectedRows 2
+        expect(buffer.lineForRow 2).toBe ' '.repeat 8
+
+        editor.insertText 'def f(x=[0,1,2,\n'
+        pythonIndent.properlyIndent()
+        expect(buffer.lineForRow 3).toBe ' '.repeat 17
+
+        editor.insertText '3,4,5]):\n'
+        pythonIndent.properlyIndent()
+        expect(buffer.lineForRow 4).toBe ' '.repeat 12
+
     describe 'when unindenting after newline :: aligned with opening delimiter', ->
 
       '''
@@ -442,3 +466,15 @@ describe 'python-indent', ->
         editor.insertText 'arg3, arg4),\n'
         pythonIndent.properlyIndent()
         expect(buffer.lineForRow 3).toBe ' '.repeat 4
+
+  describe 'when source is malformed', ->
+
+    '''
+    class DoesBadlyFormedCodeBreak )
+    '''
+    it 'does not throw error or indent when code is malformed', ->
+      editor.insertText 'class DoesBadlyFormedCodeBreak )\n'
+      expect ->
+        pythonIndent.properlyIndent()
+      .not.toThrow()
+      expect(buffer.lineForRow 1).toBe ''
