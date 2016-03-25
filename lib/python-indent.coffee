@@ -146,6 +146,18 @@ class PythonIndent
     # this is the row of the last function definition
     lastColonRow = NaN
 
+    # true if we are in a triple quoted string
+    inTripleQuotedString = false
+
+    # If we have seen two of the same string delimiters in a row,
+    # then we have to check the next character to see if it matches
+    # in order to correctly parse triple quoted strings.
+    checkNextCharForString = false
+
+    # keep track of the number of consecutive string delimiter's we've seen
+    # used to tell if we are in a triple quoted string
+    numConsecutiveStringDelimiters = 0
+
     # NOTE: this parsing will only be correct if the python code is well-formed
     #       statements like "[0, (1, 2])" might break the parsing
 
@@ -166,6 +178,16 @@ class PythonIndent
         for col in [0 .. line.length - 1] by 1
             c = line[col]
 
+            if c == stringDelimiter and not isEscaped
+                numConsecutiveStringDelimiters += 1
+            else if checkNextCharForString
+                numConsecutiveStringDelimiters = 0
+                stringDelimiter = []
+            else
+                numConsecutiveStringDelimiters = 0
+
+            checkNextCharForString = false
+
             # if stringDelimiter is set, then we are in a string
             # Note that this works correctly even for triple quoted strings
             if stringDelimiter.length
@@ -176,12 +198,34 @@ class PythonIndent
                     isEscaped = false
                 else
                     if c == stringDelimiter
-                        # We are seeing the same quote that started the string, i.e. ' or ",
-                        # so we are no longer in a string. Note that this will work perfectly
-                        # well for triple quoted strings since there are an odd number of quotes
-                        # at the beginning and ending. Someone had parsers in mind when they
-                        # decided that...
-                        stringDelimiter = []
+                        # We are seeing the same quote that started the string, i.e. ' or "
+                        if inTripleQuotedString
+                            if numConsecutiveStringDelimiters == 3
+                                # breaking out of the triple quoted string...
+                                numConsecutiveStringDelimiters = 0
+                                stringDelimiter = []
+                                inTripleQuotedString = false
+                        else if numConsecutiveStringDelimiters == 3
+                            # reset the count, correctly handles cases like ''''''
+                            numConsecutiveStringDelimiters = 0
+                            inTripleQuotedString = true
+                        else if numConsecutiveStringDelimiters == 2
+                            # we are not currently in a triple quoted string, and we've
+                            # seen two of the same string delimiter in a row. This could
+                            # either be an empty string, i.e. '' or "", or it could be
+                            # the start of a triple quoted string. We will check the next
+                            # character, and if it matches then we know we're in a triple
+                            # quoted string, and if it does not match we know we're not
+                            # in a string any more (i.e. it was the empty string).
+                            checkNextCharForString = true
+                        else if numConsecutiveStringDelimiters == 1
+                            # We are not in a string that is not triple quoted, and we've
+                            # just seen an un-escaped instance of that string delimiter.
+                            # In other words, we've left the string.
+                            # It is also worth noting that it is impossible for
+                            # numConsecutiveStringDelimiters to be 0 at this point, so
+                            # this set of if/else if statements covers all cases.
+                            stringDelimiter = []
                     else if c == '\\'
                         # We are seeing an unescaped backslash, the next character is escaped.
                         # Note that this is not exactly true in raw strings, HOWEVER, in raw strings
@@ -227,6 +271,7 @@ class PythonIndent
                     else if c in '\'"'
                         # starting a string, keep track of what quote was used to start it.
                         stringDelimiter = c
+                        numConsecutiveStringDelimiters += 1
 
     return {} =
         openBracketStack: openBracketStack
