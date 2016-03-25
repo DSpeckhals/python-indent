@@ -29,7 +29,8 @@ class PythonIndent
     lastClosedRow = parseOutput.lastClosedRow
     # A stack containing the row number where each bracket was closed.
     shouldHang = parseOutput.shouldHang
-    lastFunctionRow = parseOutput.lastFunctionRow
+    # The last row a def/for/if/elif/else/try/except etc. block started
+    lastColonRow = parseOutput.lastColonRow
 
     if shouldHang
         @indentHanging(row, @editor.buffer.lineForRow(row - 1))
@@ -44,8 +45,9 @@ class PythonIndent
             # row where it was opened
             indentLevel = @editor.indentationForBufferRow(lastClosedRow[0])
 
-            if lastFunctionRow == row - 1
-                # we just finished defining a function, need to increase indentation
+            if lastColonRow == row - 1
+                # we just finished def/for/if/elif/else/try/except etc. block,
+                # need to increase indent level by 1.
                 indentLevel += 1
 
             @editor.setIndentationForBufferRow(row, indentLevel)
@@ -142,7 +144,7 @@ class PythonIndent
     # i.e., did this string start with ' or with "?
     stringDelimiter = []
     # this is the row of the last function definition
-    lastFunctionRow = NaN
+    lastColonRow = NaN
 
     # NOTE: this parsing will only be correct if the python code is well-formed
     #       statements like "[0, (1, 2])" might break the parsing
@@ -158,8 +160,8 @@ class PythonIndent
         # true if we should have a hanging indent, false otherwise
         shouldHang = false
 
-        # this is the last defined function row
-        lastLastFunctionRow = lastFunctionRow
+        # this is the last defined def/for/if/elif/else/try/except row
+        lastlastColonRow = lastColonRow
 
         for col in [0 .. line.length - 1] by 1
             c = line[col]
@@ -211,13 +213,13 @@ class PythonIndent
 
                     # Similar to above, we've already skipped all irrelevant characters,
                     # so if we saw a colon earlier in this line, then we would have
-                    # incorrectly thought it was the end of a function definition when
-                    # it was actually a dictionary being defined, reset the lastFunctionRow
-                    # variable to whatever it was when we started parsing this line.
-                    lastFunctionRow = lastLastFunctionRow
+                    # incorrectly thought it was the end of a def/for/if/elif/else/try/except
+                    # block when it was actually a dictionary being defined, reset the
+                    # lastColonRow variable to whatever it was when we started parsing this line.
+                    lastColonRow = lastlastColonRow
 
                     if c == ':'
-                        lastFunctionRow = row
+                        lastColonRow = row
                     else if c in '})]' and openBracketStack.length
                         # Note that the .pop() will take the element off of the openBracketStack
                         # as it adds it to the array for lastClosedRow.
@@ -230,7 +232,7 @@ class PythonIndent
         openBracketStack: openBracketStack
         lastClosedRow: lastClosedRow
         shouldHang: shouldHang
-        lastFunctionRow: lastFunctionRow
+        lastColonRow: lastColonRow
 
   indentHanging: (row, previousLine) ->
     # Indent at the current block level plus the setting amount (1 or 2)
