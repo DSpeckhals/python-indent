@@ -265,6 +265,56 @@ describe 'python-indent', ->
         pythonIndent.properlyIndent()
         expect(buffer.lineForRow 4).toBe ' '.repeat 12
 
+      '''
+      """ here is a triple quote with a single string delimiter: " """
+      var_name = [0, 1, 2,
+      '''
+      it 'correctly handles odd number of string delimiters inside triple quoted string', ->
+        editor.insertText '""" here is a triple quote with a single string delimiter: " """\n'
+        editor.insertText 'var_name = [0, 1, 2,\n'
+        pythonIndent.properlyIndent()
+        expect(buffer.lineForRow 2).toBe ' '.repeat 12
+
+      '''
+      """ here is a triple quote with a two string delimiters: "" """
+      var_name = [0, 1, 2,
+      '''
+      it 'correctly handles even number of string delimiters inside triple quoted string', ->
+        editor.insertText '""" here is a triple quote with a two string delimiters: "" """\n'
+        editor.insertText 'var_name = [0, 1, 2,\n'
+        pythonIndent.properlyIndent()
+        expect(buffer.lineForRow 2).toBe ' '.repeat 12
+
+      """
+      ''' here is 'a triple quote' with three extra' string delimiters' '''
+      var_name = [0, 1, 2,
+      """
+      it 'correctly handles three string delimiters spaced out inside triple quoted string', ->
+        editor.insertText "''' here is 'a triple quote' with three extra' string delimiters' '''\n"
+        editor.insertText 'var_name = [0, 1, 2,\n'
+        pythonIndent.properlyIndent()
+        expect(buffer.lineForRow 2).toBe ' '.repeat 12
+
+      """
+      ''' here is a string with an \\'escaped delimiter in the middle'''
+      var_name = [0, 1, 2,
+      """
+      it 'correctly handles escaped delimieters at the end of a triple quoted string', ->
+        editor.insertText "''' here is a string with an \\'escaped delimiter in the middle'''\n"
+        editor.insertText 'var_name = [0, 1, 2,\n'
+        pythonIndent.properlyIndent()
+        expect(buffer.lineForRow 2).toBe ' '.repeat 12
+
+      """
+      ''' here is a string with an escaped delimiter at the end\\''''
+      var_name = [0, 1, 2,
+      """
+      it 'correctly handles escaped delimieters at the end of a triple quoted string', ->
+        editor.insertText "''' here is a string with an escaped delimiter at the end\\''''\n"
+        editor.insertText 'var_name = [0, 1, 2,\n'
+        pythonIndent.properlyIndent()
+        expect(buffer.lineForRow 2).toBe ' '.repeat 12
+
     describe 'when unindenting after newline :: aligned with opening delimiter', ->
 
       '''

@@ -29,7 +29,8 @@ class PythonIndent
     lastClosedRow = parseOutput.lastClosedRow
     # A stack containing the row number where each bracket was closed.
     shouldHang = parseOutput.shouldHang
-    lastFunctionRow = parseOutput.lastFunctionRow
+    # The last row a def/for/if/elif/else/try/except etc. block started
+    lastColonRow = parseOutput.lastColonRow
 
     if shouldHang
         @indentHanging(row, @editor.buffer.lineForRow(row - 1))
@@ -44,8 +45,9 @@ class PythonIndent
             # row where it was opened
             indentLevel = @editor.indentationForBufferRow(lastClosedRow[0])
 
-            if lastFunctionRow == row - 1
-                # we just finished defining a function, need to increase indentation
+            if lastColonRow == row - 1
+                # we just finished def/for/if/elif/else/try/except etc. block,
+                # need to increase indent level by 1.
                 indentLevel += 1
 
             @editor.setIndentationForBufferRow(row, indentLevel)
@@ -142,7 +144,19 @@ class PythonIndent
     # i.e., did this string start with ' or with "?
     stringDelimiter = []
     # this is the row of the last function definition
-    lastFunctionRow = NaN
+    lastColonRow = NaN
+
+    # true if we are in a triple quoted string
+    inTripleQuotedString = false
+
+    # If we have seen two of the same string delimiters in a row,
+    # then we have to check the next character to see if it matches
+    # in order to correctly parse triple quoted strings.
+    checkNextCharForString = false
+
+    # keep track of the number of consecutive string delimiter's we've seen
+    # used to tell if we are in a triple quoted string
+    numConsecutiveStringDelimiters = 0
 
     # NOTE: this parsing will only be correct if the python code is well-formed
     #       statements like "[0, (1, 2])" might break the parsing
@@ -158,11 +172,21 @@ class PythonIndent
         # true if we should have a hanging indent, false otherwise
         shouldHang = false
 
-        # this is the last defined function row
-        lastLastFunctionRow = lastFunctionRow
+        # this is the last defined def/for/if/elif/else/try/except row
+        lastlastColonRow = lastColonRow
 
         for col in [0 .. line.length - 1] by 1
             c = line[col]
+
+            if c == stringDelimiter and not isEscaped
+                numConsecutiveStringDelimiters += 1
+            else if checkNextCharForString
+                numConsecutiveStringDelimiters = 0
+                stringDelimiter = []
+            else
+                numConsecutiveStringDelimiters = 0
+
+            checkNextCharForString = false
 
             # if stringDelimiter is set, then we are in a string
             # Note that this works correctly even for triple quoted strings
@@ -174,12 +198,34 @@ class PythonIndent
                     isEscaped = false
                 else
                     if c == stringDelimiter
-                        # We are seeing the same quote that started the string, i.e. ' or ",
-                        # so we are no longer in a string. Note that this will work perfectly
-                        # well for triple quoted strings since there are an odd number of quotes
-                        # at the beginning and ending. Someone had parsers in mind when they
-                        # decided that...
-                        stringDelimiter = []
+                        # We are seeing the same quote that started the string, i.e. ' or "
+                        if inTripleQuotedString
+                            if numConsecutiveStringDelimiters == 3
+                                # breaking out of the triple quoted string...
+                                numConsecutiveStringDelimiters = 0
+                                stringDelimiter = []
+                                inTripleQuotedString = false
+                        else if numConsecutiveStringDelimiters == 3
+                            # reset the count, correctly handles cases like ''''''
+                            numConsecutiveStringDelimiters = 0
+                            inTripleQuotedString = true
+                        else if numConsecutiveStringDelimiters == 2
+                            # we are not currently in a triple quoted string, and we've
+                            # seen two of the same string delimiter in a row. This could
+                            # either be an empty string, i.e. '' or "", or it could be
+                            # the start of a triple quoted string. We will check the next
+                            # character, and if it matches then we know we're in a triple
+                            # quoted string, and if it does not match we know we're not
+                            # in a string any more (i.e. it was the empty string).
+                            checkNextCharForString = true
+                        else if numConsecutiveStringDelimiters == 1
+                            # We are not in a string that is not triple quoted, and we've
+                            # just seen an un-escaped instance of that string delimiter.
+                            # In other words, we've left the string.
+                            # It is also worth noting that it is impossible for
+                            # numConsecutiveStringDelimiters to be 0 at this point, so
+                            # this set of if/else if statements covers all cases.
+                            stringDelimiter = []
                     else if c == '\\'
                         # We are seeing an unescaped backslash, the next character is escaped.
                         # Note that this is not exactly true in raw strings, HOWEVER, in raw strings
@@ -211,13 +257,13 @@ class PythonIndent
 
                     # Similar to above, we've already skipped all irrelevant characters,
                     # so if we saw a colon earlier in this line, then we would have
-                    # incorrectly thought it was the end of a function definition when
-                    # it was actually a dictionary being defined, reset the lastFunctionRow
-                    # variable to whatever it was when we started parsing this line.
-                    lastFunctionRow = lastLastFunctionRow
+                    # incorrectly thought it was the end of a def/for/if/elif/else/try/except
+                    # block when it was actually a dictionary being defined, reset the
+                    # lastColonRow variable to whatever it was when we started parsing this line.
+                    lastColonRow = lastlastColonRow
 
                     if c == ':'
-                        lastFunctionRow = row
+                        lastColonRow = row
                     else if c in '})]' and openBracketStack.length
                         # Note that the .pop() will take the element off of the openBracketStack
                         # as it adds it to the array for lastClosedRow.
@@ -225,12 +271,13 @@ class PythonIndent
                     else if c in '\'"'
                         # starting a string, keep track of what quote was used to start it.
                         stringDelimiter = c
+                        numConsecutiveStringDelimiters += 1
 
     return {} =
         openBracketStack: openBracketStack
         lastClosedRow: lastClosedRow
         shouldHang: shouldHang
-        lastFunctionRow: lastFunctionRow
+        lastColonRow: lastColonRow
 
   indentHanging: (row, previousLine) ->
     # Indent at the current block level plus the setting amount (1 or 2)
