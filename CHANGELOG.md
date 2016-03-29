@@ -1,3 +1,8 @@
+## 0.4.3 - Escaped Single Quotes in a Triple-Quoted String
+- Fix indentation behavior when there are odd numbers of escaped single quotes within a string. This fixed #22.
+- Update some wording in the README.
+- Clean up variable names.
+
 ## 0.4.2 - Errors on Malformed Code
 - Don't throw error when source code is malformed. This fixed #17.
 
