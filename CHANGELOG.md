@@ -1,3 +1,6 @@
+# 1.0.0 - Convert source code to ES2015
+- Functionality should be the same as 0.4.3
+
 ## 0.4.3 - Escaped Single Quotes in a Triple-Quoted String
 - Fix indentation behavior when there are odd numbers of escaped single quotes within a string. This fixed #22.
 - Update some wording in the README.
