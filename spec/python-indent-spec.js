@@ -53,7 +53,7 @@ describe("python-indent", () => {
             */
             it("indents after open def params", () => {
                 editor.insertText("def test(param_a, param_b, param_c,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(9));
             });
 
@@ -63,7 +63,7 @@ describe("python-indent", () => {
             */
             it("indents after open bracket with multiple values on the first line", () => {
                 editor.insertText("x = [0, 1, 2,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(5));
             });
 
@@ -73,7 +73,7 @@ describe("python-indent", () => {
             */
             it("indents after open bracket with one value on the first line", () => {
                 editor.insertText("x = [0,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(5));
             });
 
@@ -83,7 +83,7 @@ describe("python-indent", () => {
             */
             it("indeents in nested lists when inner list is on the same line", () => {
                 editor.insertText("x = [0, 1, 2, [3, 4, 5,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(15));
             });
 
@@ -94,11 +94,11 @@ describe("python-indent", () => {
             */
             it("indeents in nested lists when inner list is on a new line", () => {
                 editor.insertText("x = [0, 1, 2,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(5));
 
                 editor.insertText("[3, 4, 5,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(6));
             });
 
@@ -108,7 +108,7 @@ describe("python-indent", () => {
             */
             it("indents after open tuple with multiple values on the first line", () => {
                 editor.insertText("x = (0, 1, 2,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(5));
             });
 
@@ -118,7 +118,7 @@ describe("python-indent", () => {
             */
             it("indents after open tuple with one value on the first line", () => {
                 editor.insertText("x = (0,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(5));
             });
 
@@ -129,11 +129,11 @@ describe("python-indent", () => {
             */
             it("indents in nested lists when inner list is on a new line", () => {
                 editor.insertText("x = (0, 1, 2, [3, 4, 5,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(15));
 
                 editor.insertText("6, 7, 8],\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(5));
             });
 
@@ -143,7 +143,7 @@ describe("python-indent", () => {
             */
             it("indents dictionaries when multiple pairs are on the same line", () => {
                 editor.insertText("x = {0: 0, 1: 1,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(5));
             });
 
@@ -154,11 +154,11 @@ describe("python-indent", () => {
             */
             it("indents dictionaries with a list as a value", () => {
                 editor.insertText("x = {0: 0, 1: 1,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(5));
 
                 editor.insertText("2: 2, 3: 3, 4: [4, 4,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(21));
             });
 
@@ -167,7 +167,7 @@ describe("python-indent", () => {
             */
             it("does not indent with delimiters that are quoted", () => {
                 editor.insertText("s = \"[ will this \\\"break ( the parsing?\"\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe("");
             });
 
@@ -180,15 +180,15 @@ describe("python-indent", () => {
             */
             it("knows when to indent when some delimiters are literal, and some are not", () => {
                 editor.insertText("x = [\"here(\\\"(\", \"is\", \"a\",\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(5));
 
                 editor.insertText("\"list\", \"of\", [\"nested]\",\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(20));
 
                 editor.insertText("\"strings\\\\\"],\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(3)).toBe(" ".repeat(5));
 
                 editor.insertText("r\"some \\[\\\"[of which are raw\",\n");
@@ -203,7 +203,7 @@ describe("python-indent", () => {
             */
             it("indents normally when delimiter is closed", () => {
                 editor.insertText("def test(param_a, param_b, param_c):\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(4));
             });
 
@@ -215,7 +215,7 @@ describe("python-indent", () => {
             */
             it("keeps indentation on succeding open lines", () => {
                 editor.insertText("def test(param_a,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 editor.insertText("param_b,\n");
                 editor.autoIndentSelectedRows(2);
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(9));
@@ -232,15 +232,15 @@ describe("python-indent", () => {
                 editor.insertText("class TheClass(object):\n");
                 editor.autoIndentSelectedRows(1);
                 editor.insertText("def test(param_a, param_b,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 editor.insertText("param_c):\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(3)).toBe(" ".repeat(8));
 
                 editor.insertText("a_list = [1, 2, 3,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 editor.insertText("4]\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(5)).toBe(" ".repeat(8));
             });
 
@@ -252,7 +252,7 @@ describe("python-indent", () => {
             */
             it("indents properly when delimiters are an argument default string", () => {
                 editor.insertText("def f(arg1, arg2, arg3,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(6));
 
                 editor.insertText("arg4, arg5, arg6=\")\\)\",\n");
@@ -260,7 +260,7 @@ describe("python-indent", () => {
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(6));
 
                 editor.insertText("arg7=0):\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(3)).toBe(" ".repeat(4));
             });
 
@@ -273,7 +273,7 @@ describe("python-indent", () => {
             */
             it("indents properly when blocks and lists are deeply nested", () => {
                 editor.insertText("for i in range(10):\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(4));
 
                 editor.insertText("for j in range(20):\n");
@@ -281,11 +281,11 @@ describe("python-indent", () => {
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(8));
 
                 editor.insertText("def f(x=[0,1,2,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(3)).toBe(" ".repeat(17));
 
                 editor.insertText("3,4,5]):\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(4)).toBe(" ".repeat(12));
             });
 
@@ -296,7 +296,7 @@ describe("python-indent", () => {
             it("handles odd number of string delimiters inside triple quoted string", () => {
                 editor.insertText("\"\"\" quote with a single string delimiter: \" \"\"\"\n");
                 editor.insertText("var_name = [0, 1, 2,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(12));
             });
 
@@ -307,7 +307,7 @@ describe("python-indent", () => {
             it("handles even number of string delimiters inside triple quoted string", () => {
                 editor.insertText("\"\"\" a quote with a two string delimiters: \"\" \"\"\"\n");
                 editor.insertText("var_name = [0, 1, 2,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(12));
             });
 
@@ -318,7 +318,7 @@ describe("python-indent", () => {
             it("handles three string delimiters spaced out inside triple quoted string", () => {
                 editor.insertText("### here is \"a quote\" with extra\" string delimiters\" ###\n");
                 editor.insertText("var_name = [0, 1, 2,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(12));
             });
 
@@ -329,7 +329,7 @@ describe("python-indent", () => {
             it("correctly handles escaped delimieters at the end of a triple quoted string", () => {
                 editor.insertText("### string with an \\\"escaped delimiter in the middle###\n");
                 editor.insertText("var_name = [0, 1, 2,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(12));
             });
 
@@ -340,7 +340,7 @@ describe("python-indent", () => {
             it("correctly handles escaped delimiters at the end of a quoted string", () => {
                 editor.insertText("### here is a string with an escaped delimiter ending\\###\"\n");
                 editor.insertText("var_name = [0, 1, 2,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(12));
             });
         });
@@ -353,9 +353,9 @@ describe("python-indent", () => {
             */
             it("unindents after close def params", () => {
                 editor.insertText("def test(param_a,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 editor.insertText("param_b):\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(4));
             });
 
@@ -365,9 +365,9 @@ describe("python-indent", () => {
             */
             it("unindents after close tuple", () => {
                 editor.insertText("tup = (True, False,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 editor.insertText("False)\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(2)).toBe("");
             });
 
@@ -377,9 +377,9 @@ describe("python-indent", () => {
             */
             it("unindents after close bracket", () => {
                 editor.insertText("a_list = [1, 2,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 editor.insertText("3]\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(2)).toBe("");
             });
 
@@ -388,7 +388,7 @@ describe("python-indent", () => {
             */
             it("unindents after close curly brace", () => {
                 editor.insertText("a_dict = {0: 0}\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe("");
             });
         });
@@ -404,7 +404,7 @@ describe("python-indent", () => {
             */
             it("hanging indents after open def params", () => {
                 editor.insertText("def test(\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(4));
             });
 
@@ -415,7 +415,7 @@ describe("python-indent", () => {
             */
             it("indents after open tuple", () => {
                 editor.insertText("tup = (\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(4));
             });
 
@@ -426,7 +426,7 @@ describe("python-indent", () => {
             */
             it("indents after open bracket", () => {
                 editor.insertText("a_list = [\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(4));
             });
 
@@ -439,7 +439,7 @@ describe("python-indent", () => {
             */
             it("indents on succeding open lines", () => {
                 editor.insertText("def test(\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 editor.insertText("param_a,\n");
                 editor.autoIndentSelectedRows(2);
                 editor.insertText("param_b,\n");
@@ -461,7 +461,7 @@ describe("python-indent", () => {
                 editor.insertText("class TheClass(object):\n");
                 editor.autoIndentSelectedRows(1);
                 editor.insertText("def test(\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 editor.insertText("param_a, param_b,\n");
                 editor.autoIndentSelectedRows(3);
                 editor.insertText("param_c):\n");
@@ -469,7 +469,7 @@ describe("python-indent", () => {
                 expect(buffer.lineForRow(4)).toBe(" ".repeat(4));
 
                 editor.insertText("a_list = [\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 editor.insertText("\"1\", \"2\", \"3\",\n");
                 editor.autoIndentSelectedRows(6);
                 editor.insertText("\"4\"]\n");
@@ -486,7 +486,7 @@ describe("python-indent", () => {
             */
             it("indents when delimiter is not commented, but other characters are", () => {
                 editor.insertText("x = [ #\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(4));
             });
 
@@ -495,7 +495,7 @@ describe("python-indent", () => {
              */
             it("does not indent when bracket delimiter is commented", () => {
                 editor.insertText("# [\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe("");
             });
 
@@ -504,7 +504,7 @@ describe("python-indent", () => {
              */
             it("does not indent when parentheses delimiter is commented", () => {
                 editor.insertText("# (\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe("");
             });
 
@@ -513,7 +513,7 @@ describe("python-indent", () => {
              */
             it("does not indent when brace delimiter is commented", () => {
                 editor.insertText("# {\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe("");
             });
 
@@ -522,7 +522,7 @@ describe("python-indent", () => {
              */
             it("does not indent when function def is commented", () => {
                 editor.insertText("# def f():\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe("");
             });
         });
@@ -536,9 +536,9 @@ describe("python-indent", () => {
             */
             it("continues correctly after bracket is opened and closed on same line", () => {
                 editor.insertText("alpha = (\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 editor.insertText("epsilon(),\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(4));
             });
 
@@ -551,14 +551,14 @@ describe("python-indent", () => {
             */
             it("continues after bracket is opened/closed on different lines", () => {
                 editor.insertText("alpha = (\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
 
                 editor.insertText("epsilon(arg1, arg2,\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(12));
 
                 editor.insertText("arg3, arg4),\n");
-                pythonIndent.properlyIndent();
+                pythonIndent.indent();
                 expect(buffer.lineForRow(3)).toBe(" ".repeat(4));
             });
         });
@@ -571,7 +571,7 @@ describe("python-indent", () => {
         */
         it("does not throw error or indent when code is malformed", () => {
             editor.insertText("class DoesBadlyFormedCodeBreak )\n");
-            expect(() => pythonIndent.properlyIndent())
+            expect(() => pythonIndent.indent())
             .not.toThrow();
             expect(buffer.lineForRow(1)).toBe("");
         })
