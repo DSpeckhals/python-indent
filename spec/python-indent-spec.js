@@ -79,7 +79,7 @@ describe("python-indent", () => {
 
             /*
             x = [0, 1, 2, [3, 4, 5,
-                                         6, 7, 8]]
+                           6, 7, 8]]
             */
             it("indeents in nested lists when inner list is on the same line", () => {
                 editor.insertText("x = [0, 1, 2, [3, 4, 5,\n");
@@ -89,8 +89,8 @@ describe("python-indent", () => {
 
             /*
             x = [0, 1, 2,
-                     [3, 4, 5,
-                        6, 7, 8]]
+                 [3, 4, 5,
+                  6, 7, 8]]
             */
             it("indeents in nested lists when inner list is on a new line", () => {
                 editor.insertText("x = [0, 1, 2,\n");
@@ -104,7 +104,7 @@ describe("python-indent", () => {
 
             /*
             x = (0, 1, 2,
-                     3, 4, 5)
+                 3, 4, 5)
             */
             it("indents after open tuple with multiple values on the first line", () => {
                 editor.insertText("x = (0, 1, 2,\n");
@@ -114,7 +114,7 @@ describe("python-indent", () => {
 
             /*
             x = (0,
-                     1)
+                 1)
             */
             it("indents after open tuple with one value on the first line", () => {
                 editor.insertText("x = (0,\n");
@@ -124,8 +124,8 @@ describe("python-indent", () => {
 
             /*
             x = (0, 1, 2, [3, 4, 5,
-                                         6, 7, 8],
-                     9, 10, 11)
+                           6, 7, 8],
+                 9, 10, 11)
             */
             it("indents in nested lists when inner list is on a new line", () => {
                 editor.insertText("x = (0, 1, 2, [3, 4, 5,\n");
@@ -139,7 +139,7 @@ describe("python-indent", () => {
 
             /*
             x = {0: 0, 1: 1,
-                     2: 2, 3: 3}
+                 2: 2, 3: 3}
             */
             it("indents dictionaries when multiple pairs are on the same line", () => {
                 editor.insertText("x = {0: 0, 1: 1,\n");
@@ -149,8 +149,8 @@ describe("python-indent", () => {
 
             /*
             x = {0: 0, 1: 1,
-                     2: 2, 3: 3, 4: [4, 4,
-                                                     4, 4]}
+                 2: 2, 3: 3, 4: [4, 4,
+                                 4, 4]}
             */
             it("indents dictionaries with a list as a value", () => {
                 editor.insertText("x = {0: 0, 1: 1,\n");
@@ -174,7 +174,7 @@ describe("python-indent", () => {
             /*
             x = ["here(\"(", "is", "a",
                      "list", "of", ["nested]",
-                                                    "strings\\"],
+                                    "strings\\"],
                      r"some \[\"[of which are raw",
                      "and some of which are not"]
             */
@@ -198,7 +198,7 @@ describe("python-indent", () => {
 
             /*
             def test(param_a, param_b, param_c,
-                             param_d):
+                     param_d):
                     pass
             */
             it("indents normally when delimiter is closed", () => {
@@ -209,8 +209,8 @@ describe("python-indent", () => {
 
             /*
             def test(param_a,
-                             param_b,
-                             param_c):
+                     param_b,
+                     param_c):
                     pass
             */
             it("keeps indentation on succeding open lines", () => {
@@ -224,9 +224,9 @@ describe("python-indent", () => {
             /*
             class TheClass(object):
                     def test(param_a, param_b,
-                                     param_c):
-                            a_list = [1, 2, 3,
-                                                4]
+                             param_c):
+                        a_list = [1, 2, 3,
+                                  4]
             */
             it("allows for fluid indent in multi-level situations", () => {
                 editor.insertText("class TheClass(object):\n");
@@ -246,9 +246,9 @@ describe("python-indent", () => {
 
             /*
             def f(arg1, arg2, arg3,
-                        arg4, arg5, arg6=")\)",
-                        arg7=0):
-                    return 0
+                  arg4, arg5, arg6=")\)",
+                  arg7=0):
+                return 0
             */
             it("indents properly when delimiters are an argument default string", () => {
                 editor.insertText("def f(arg1, arg2, arg3,\n");
@@ -268,8 +268,8 @@ describe("python-indent", () => {
             for i in range(10):
                     for j in range(20):
                             def f(x=[0,1,2,
-                                             3,4,5]):
-                                    return x * i * j
+                                     3,4,5]):
+                                return x * i * j
             */
             it("indents properly when blocks and lists are deeply nested", () => {
                 editor.insertText("for i in range(10):\n");
@@ -348,8 +348,8 @@ describe("python-indent", () => {
         describe("when unindenting after newline :: aligned with opening delimiter", () => {
             /*
             def test(param_a,
-                             param_b):
-                    pass
+                     param_b):
+                pass
             */
             it("unindents after close def params", () => {
                 editor.insertText("def test(param_a,\n");
@@ -361,7 +361,7 @@ describe("python-indent", () => {
 
             /*
             tup = (True, False,
-                         False)
+                   False)
             */
             it("unindents after close tuple", () => {
                 editor.insertText("tup = (True, False,\n");
@@ -373,7 +373,7 @@ describe("python-indent", () => {
 
             /*
             a_list = [1, 2,
-                                3]
+                      3]
             */
             it("unindents after close bracket", () => {
                 editor.insertText("a_list = [1, 2,\n");
@@ -399,7 +399,7 @@ describe("python-indent", () => {
         describe("when indenting after newline", () => {
             /*
             def test(
-                    param_a
+                param_a
             )
             */
             it("hanging indents after open def params", () => {
@@ -410,7 +410,7 @@ describe("python-indent", () => {
 
             /*
             tup = (
-                    "elem"
+                "elem"
             )
             */
             it("indents after open tuple", () => {
@@ -421,7 +421,7 @@ describe("python-indent", () => {
 
             /*
             a_list = [
-                    "elem"
+                "elem"
             ]
             */
             it("indents after open bracket", () => {
@@ -432,9 +432,9 @@ describe("python-indent", () => {
 
             /*
             def test(
-                    param_a,
-                    param_b,
-                    param_c
+                param_a,
+                param_b,
+                param_c
             )
             */
             it("indents on succeding open lines", () => {
@@ -449,12 +449,12 @@ describe("python-indent", () => {
 
             /*
             class TheClass(object):
-                    def test(
-                            param_a, param_b,
-                            param_c):
+                def test(
+                        param_a, param_b,
+                        param_c):
                             a_list = [
-                                    "1", "2", "3",
-                                    "4"
+                                "1", "2", "3",
+                                "4"
                             ]
             */
             it("allows for indent in multi-level situations", () => {
@@ -481,7 +481,7 @@ describe("python-indent", () => {
         describe("when newline is in a comment", () => {
             /*
             x = [    #
-                    0
+                0
             ]
             */
             it("indents when delimiter is not commented, but other characters are", () => {
@@ -530,8 +530,8 @@ describe("python-indent", () => {
         describe("when continuing a hanging indent after opening/closing bracket(s)", () => {
             /*
             alpha = (
-                    epsilon(),
-                    gamma
+                epsilon(),
+                gamma
             )
             */
             it("continues correctly after bracket is opened and closed on same line", () => {
@@ -545,7 +545,7 @@ describe("python-indent", () => {
             /*
             alpha = (
                     epsilon(arg1, arg2,
-                                    arg3, arg4),
+                            arg3, arg4),
                     gamma
             )
             */

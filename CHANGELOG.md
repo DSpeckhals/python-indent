@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Conform to [Keep a Changelog](http://keepachangelog.com/)
 - Update formatting and fixed indentation error in the README.
 - Update example GIF.
+- Fix test documentation formatting.
 
 ## [1.0.0](https://github.com/DSpeckhals/python-indent/compare/v0.4.3...v1.0.0) - 2016-09-15
 ### Changed
