@@ -1,6 +1,5 @@
 # This file represents all known cases of special-case indentations
 
-
 x = [0, 1, 2,
      3, 4, 5]
 
@@ -75,7 +74,6 @@ x = [  #
 
 # def f():
 
-
 def f(arg1, arg2, arg3,
       arg4, arg5, arg6=')\)',
       arg7=0):
@@ -99,12 +97,10 @@ for i in range(10):
                  3,4,5]):
             return x * i * j
 
-
 '''
 Here is just one quote: '
 '''
 x = [0, 1, 2,
      4, 5, 6]
-
 
 class DoesBadlyFormedCodeBreak )
