@@ -1,5 +1,7 @@
 "use babel";
+
 import PythonIndent from "../lib/python-indent";
+
 describe("python-indent", () => {
     const FILE_NAME = "fixture.py";
     let buffer = null;
@@ -13,7 +15,7 @@ describe("python-indent", () => {
                 editor.setSoftTabs(true);
                 editor.setTabLength(4);
                 buffer = editor.buffer;
-            })
+            }),
         );
 
         waitsForPromise(() => {
@@ -32,7 +34,7 @@ describe("python-indent", () => {
         waitsForPromise(() =>
             atom.packages.activatePackage("python-indent").then(() => {
                 pythonIndent = new PythonIndent();
-            })
+            }),
         );
     });
 
@@ -40,7 +42,7 @@ describe("python-indent", () => {
         it("loads python file and package", () => {
             expect(editor.getPath()).toContain(FILE_NAME);
             expect(atom.packages.isPackageActive("python-indent")).toBe(true);
-        })
+        }),
     );
 
     // Aligned with opening delimiter
@@ -305,10 +307,26 @@ describe("python-indent", () => {
             var_name = [0, 1, 2,
             */
             it("handles even number of string delimiters inside triple quoted string", () => {
-                editor.insertText("\"\"\" a quote with a two string delimiters: \"\" \"\"\"\n");
+                editor.insertText("\"\"\" a quote with two string delimiters: \"\" \"\"\"\n");
                 editor.insertText("var_name = [0, 1, 2,\n");
                 pythonIndent.indent();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(12));
+            });
+
+            /*
+            """
+            Here is just one quote: "
+            """
+            x = [0, 1, 2,
+                 4, 5, 6]
+            */
+            it("handles a single delimiter inside a triple quoted string of the same delimiter", () => {
+                editor.insertText("\"\"\"\n");
+                editor.insertText("Here is just one quote: \"\n");
+                editor.insertText("\"\"\"\n");
+                editor.insertText("x = [0, 1, 2,\n");
+                pythonIndent.indent();
+                expect(buffer.lineForRow(4)).toBe(" ".repeat(5));
             });
 
             /*
@@ -574,6 +592,6 @@ describe("python-indent", () => {
             expect(() => pythonIndent.indent())
             .not.toThrow();
             expect(buffer.lineForRow(1)).toBe("");
-        })
+        }),
     );
 });

@@ -4,15 +4,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.0.1] - 2017-03-10
 ### Changed
-- Name of `properlyIndent` function to just be `indent`.
+- Update name of `properlyIndent` function to just be `indent`.
 - Conform to [Keep a Changelog](http://keepachangelog.com/)
 - Update formatting and fixed indentation error in the README.
 - Update example GIF.
 - Fix test documentation formatting.
+- Update license copyright.
+- Update eslint, eslint-config-airbnb-base, and eslint-plugin-import to their latest versions.
 
-## [1.0.0](https://github.com/DSpeckhals/python-indent/compare/v0.4.3...v1.0.0) - 2016-09-15
+### Fixed
+- Fix broken package activation discovered by an Atom beta channel (1.16.0-beta0) user. This appears
+to have been caused by an Atom core Babel upgrade and this package using the incorrect type of function
+declaration.
+- Fix incorrect indent in the rare case when an unterminated comment character occurs within a
+triple-quoted string. Also add a spec that will catch any future regressions for this case. This
+fixed #33.
+
+## [1.0.0] - 2016-09-15
 ### Changed
 - Update to ES6; functionality should be the same as 0.4.3
 
@@ -103,7 +113,8 @@ in the line (perhaps a string).
 - Fluid indent in tuples, lists, and parameters.
 - Unindent to tab after fluid indented tuples, lists and parameters.
 
-[Unreleased]: https://github.com/DSpeckhals/python-indent/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/DSpeckhals/python-indent/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/DSpeckhals/python-indent/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/DSpeckhals/python-indent/compare/v0.4.3...v1.0.0
 [0.4.3]: https://github.com/DSpeckhals/python-indent/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/DSpeckhals/python-indent/compare/v0.4.1...v0.4.2
