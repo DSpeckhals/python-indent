@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.2] - 2017-03-15
+### Fixed
+- Fix scenario when an empty string is virtually anywhere in the markup and causes
+any further indentation to be wrong. This fixed #35.
+
 ## [1.0.1] - 2017-03-10
 ### Changed
 - Update name of `properlyIndent` function to just be `indent`.
@@ -113,7 +118,8 @@ in the line (perhaps a string).
 - Fluid indent in tuples, lists, and parameters.
 - Unindent to tab after fluid indented tuples, lists and parameters.
 
-[Unreleased]: https://github.com/DSpeckhals/python-indent/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/DSpeckhals/python-indent/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/DSpeckhals/python-indent/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/DSpeckhals/python-indent/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/DSpeckhals/python-indent/compare/v0.4.3...v1.0.0
 [0.4.3]: https://github.com/DSpeckhals/python-indent/compare/v0.4.2...v0.4.3

@@ -103,4 +103,8 @@ Here is just one quote: '
 x = [0, 1, 2,
      4, 5, 6]
 
+# Problem with empty string
+x = ""
+a = [b,]
+
 class DoesBadlyFormedCodeBreak )
