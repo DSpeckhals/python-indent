@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Changed
+- Update Travis CI configuration to latest [suggested](https://github.com/atom/ci/)) Atom package standard.
+
 ## [1.0.2] - 2017-03-15
 ### Fixed
 - Fix scenario when an empty string is virtually anywhere in the markup and causes
