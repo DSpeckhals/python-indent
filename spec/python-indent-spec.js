@@ -320,13 +320,24 @@ describe("python-indent", () => {
             x = [0, 1, 2,
                  4, 5, 6]
             */
-            it("handles a single delimiter inside a triple quoted string of the same delimiter", () => {
+            it("handles a single delimiter inside a triple quoted string of the same char", () => {
                 editor.insertText("\"\"\"\n");
                 editor.insertText("Here is just one quote: \"\n");
                 editor.insertText("\"\"\"\n");
                 editor.insertText("x = [0, 1, 2,\n");
                 pythonIndent.indent();
                 expect(buffer.lineForRow(4)).toBe(" ".repeat(5));
+            });
+
+            /*
+            x = ""
+            a = [b]
+            */
+            it("does not break formatting when an empty string is in the editor", () => {
+                editor.insertText("x = \"\"\n");
+                editor.insertText("a = [b,\n");
+                pythonIndent.indent();
+                expect(buffer.lineForRow(2)).toBe(" ".repeat(5));
             });
 
             /*
