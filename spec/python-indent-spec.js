@@ -268,10 +268,10 @@ describe("python-indent", () => {
 
             /*
             for i in range(10):
-                    for j in range(20):
-                            def f(x=[0,1,2,
-                                     3,4,5]):
-                                return x * i * j
+                for j in range(20):
+                    def f(x=[0,1,2,
+                             3,4,5]):
+                        return x * i * j
             */
             it("indents properly when blocks and lists are deeply nested", () => {
                 editor.insertText("for i in range(10):\n");
