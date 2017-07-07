@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.1.0] - 2017-07-07
+### Changed
+- Add a "Help" section to README that explains Atom settings and potential solutions.
+### Fixed
+- Don't try to indent when hard tabs are being used for Python. This fixed #42.
+
 ## [1.0.3] - 2017-06-01
 ### Changed
 - Update Travis CI configuration to latest [suggested](https://github.com/atom/ci/)) Atom package standard.
@@ -126,7 +132,8 @@ in the line (perhaps a string).
 - Fluid indent in tuples, lists, and parameters.
 - Unindent to tab after fluid indented tuples, lists and parameters.
 
-[Unreleased]: https://github.com/DSpeckhals/python-indent/compare/v1.0.3...HEAD
+[Unreleased]: https://github.com/DSpeckhals/python-indent/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/DSpeckhals/python-indent/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/DSpeckhals/python-indent/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/DSpeckhals/python-indent/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/DSpeckhals/python-indent/compare/v1.0.0...v1.0.1
