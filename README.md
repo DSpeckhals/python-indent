@@ -76,3 +76,12 @@ or_like_this = [
 
 There are plenty of other examples (ordinary and extraordinary) in the
 [test_file](https://github.com/DSpeckhals/python-indent/blob/master/spec/test_file.py).
+
+### This isn't working for me!
+
+Sorry to hear that! Hopefully one of the following will help you fix the problem.
+
+* Check that Atom is using "soft tabs" (i.e. spaces). Hard tabs (i.e. `'\t'`) are incompatible with PEP8 compliant continued indenting (newlines inside of a list, inside function definitions, etc.) so this package gives up if the editor is using hard tabs.
+    * Atom has two different settings for this, the "TabType" setting (with choices "auto", "soft", and "hard"), and the "Soft Tabs" setting which is used when TabType is auto, but the auto detection fails.
+* Make sure the Python code is correctly written -- sometimes what looks like incorrect indentation is actually being caused by a bracket twenty lines ago that somehow lost its closing partner!
+* If the above didn't help, please read through the issues and submit a new one if you don't see an issue that covers your problem: [https://github.com/DSpeckhals/python-indent/issues](https://github.com/DSpeckhals/python-indent/issues)
