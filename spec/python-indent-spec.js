@@ -236,7 +236,7 @@ describe("python-indent", () => {
                 editor.insertText("return (\n");
                 pythonIndent.indent();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(8));
-            })
+            });
 
             /*
             def test(x):
@@ -251,7 +251,7 @@ describe("python-indent", () => {
                 editor.insertText("yield (\n");
                 pythonIndent.indent();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(8));
-            })
+            });
 
             /*
             class TheClass(object):
