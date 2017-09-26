@@ -52,6 +52,16 @@ def test(param_a,
          param_c):
     pass
 
+def test(x):
+    return (
+        x
+    )
+
+def test(x):
+    yield (
+        x
+    )
+
 class TheClass(object):
     def test(param_a, param_b,
              param_c):
