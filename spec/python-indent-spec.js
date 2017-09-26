@@ -3,7 +3,7 @@
 import PythonIndent from "../lib/python-indent";
 
 describe("python-indent", () => {
-    const FILE_NAME = "fixture.py";
+    const FILE_NAME = "../../fixture.py";
     let buffer = null;
     let editor = null;
     let pythonIndent = null;
@@ -40,7 +40,7 @@ describe("python-indent", () => {
 
     describe("package", () =>
         it("loads python file and package", () => {
-            expect(editor.getPath()).toContain(FILE_NAME);
+            expect(editor.getPath()).toContain("fixture.py");
             expect(atom.packages.isPackageActive("python-indent")).toBe(true);
         }),
     );
