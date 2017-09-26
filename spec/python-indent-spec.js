@@ -239,6 +239,21 @@ describe("python-indent", () => {
             })
 
             /*
+            def test(x):
+                yield (
+                    x
+                )
+            */
+            it("does not dedent too much when doing hanging indent w/ return", () => {
+                editor.insertText("def test(x):\n");
+                pythonIndent.indent();
+                expect(buffer.lineForRow(1)).toBe(" ".repeat(4));
+                editor.insertText("yield (\n");
+                pythonIndent.indent();
+                expect(buffer.lineForRow(2)).toBe(" ".repeat(8));
+            })
+
+            /*
             class TheClass(object):
                     def test(param_a, param_b,
                              param_c):
