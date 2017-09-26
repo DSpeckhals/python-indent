@@ -52,6 +52,11 @@ def test(param_a,
          param_c):
     pass
 
+def test(x):
+    return (
+        x
+    )
+
 class TheClass(object):
     def test(param_a, param_b,
              param_c):
