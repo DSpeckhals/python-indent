@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.1.2] - 2017-10-07
+- Fix hanging indentation error because of API changes to getting the "decreaseNextIndent"
+regular expression pattern. Nothing changes from users of Atom < 1.22, while users with
+newer versions will notice the fix (and a very slight optimization). This fixed #51.
+
 ## [1.1.1] - 2017-09-26
 ### Fixed
 - Fix improper hanging indentation caused by an Atom 1.19 regression. This fixed #47.
@@ -138,7 +143,8 @@ in the line (perhaps a string).
 - Fluid indent in tuples, lists, and parameters.
 - Unindent to tab after fluid indented tuples, lists and parameters.
 
-[Unreleased]: https://github.com/DSpeckhals/python-indent/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/DSpeckhals/python-indent/compare/v1.1.2...HEAD
+[1.1.2]: https://github.com/DSpeckhals/python-indent/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/DSpeckhals/python-indent/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/DSpeckhals/python-indent/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/DSpeckhals/python-indent/compare/v1.0.2...v1.0.3
