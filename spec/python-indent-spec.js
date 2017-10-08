@@ -17,7 +17,7 @@ describe("python-indent", () => {
                     atom.commands.dispatch(
                         atom.views.getView(editor),
                         "editor:newline");
-                    }
+                };
                 editor.setSoftTabs(true);
                 editor.setTabLength(4);
                 buffer = editor.buffer;
@@ -435,7 +435,7 @@ describe("python-indent", () => {
                 makeNewline();
                 editor.insertText("return [x[0], x[-1]]");
                 makeNewline();
-                expect(buffer.lineForRow(2)).toBe("")
+                expect(buffer.lineForRow(2)).toBe("");
             });
 
             /*
@@ -446,7 +446,7 @@ describe("python-indent", () => {
                  ).finish()
                 print('Correctly indented!')
             */
-            it ("unindents correctly with same-line opened/closed brackets", () => {
+            it("unindents correctly with same-line opened/closed brackets", () => {
                 editor.insertText("def f(api):");
                 makeNewline();
                 editor.insertText("(api");
@@ -543,11 +543,11 @@ describe("python-indent", () => {
                 // in the dev tools.
                 editor.insertText("def test(x):");
                 makeNewline();
-                editor.insertText('return ()')
-                editor.setCursorBufferPosition([1, editor.buffer.lineForRow(1).length-1]);
+                editor.insertText("return ()");
+                editor.setCursorBufferPosition([1, editor.buffer.lineForRow(1).length - 1]);
                 makeNewline();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(8));
-                expect(buffer.lineForRow(3)).toBe(" ".repeat(4).concat(')'));
+                expect(buffer.lineForRow(3)).toBe(" ".repeat(4).concat(")"));
             });
 
             /*
