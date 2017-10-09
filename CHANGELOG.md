@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+- Handle edge case with bracket pair on same line.
 
 ## [1.1.2] - 2017-10-07
 - Fix hanging indentation error because of API changes to getting the "decreaseNextIndent"
