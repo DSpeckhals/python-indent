@@ -7,11 +7,17 @@ describe("python-indent", () => {
     let buffer = null;
     let editor = null;
     let pythonIndent = null;
+    let makeNewline = null;
 
     beforeEach(() => {
         waitsForPromise(() =>
             atom.workspace.open(FILE_NAME).then((ed) => {
                 editor = ed;
+                makeNewline = () => {
+                    atom.commands.dispatch(
+                        atom.views.getView(editor),
+                        "editor:newline");
+                };
                 editor.setSoftTabs(true);
                 editor.setTabLength(4);
                 buffer = editor.buffer;
@@ -83,7 +89,7 @@ describe("python-indent", () => {
             x = [0, 1, 2, [3, 4, 5,
                            6, 7, 8]]
             */
-            it("indeents in nested lists when inner list is on the same line", () => {
+            it("indents in nested lists when inner list is on the same line", () => {
                 editor.insertText("x = [0, 1, 2, [3, 4, 5,\n");
                 pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(15));
@@ -94,7 +100,7 @@ describe("python-indent", () => {
                  [3, 4, 5,
                   6, 7, 8]]
             */
-            it("indeents in nested lists when inner list is on a new line", () => {
+            it("indents in nested lists when inner list is on a new line", () => {
                 editor.insertText("x = [0, 1, 2,\n");
                 pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(5));
@@ -199,13 +205,12 @@ describe("python-indent", () => {
             });
 
             /*
-            def test(param_a, param_b, param_c,
-                     param_d):
+            def test(param_a, param_b, param_c):
                     pass
             */
             it("indents normally when delimiter is closed", () => {
-                editor.insertText("def test(param_a, param_b, param_c):\n");
-                pythonIndent.indent();
+                editor.insertText("def test(param_a, param_b, param_c):");
+                makeNewline();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(4));
             });
 
@@ -274,20 +279,20 @@ describe("python-indent", () => {
                         return x * i * j
             */
             it("indents properly when blocks and lists are deeply nested", () => {
-                editor.insertText("for i in range(10):\n");
-                pythonIndent.indent();
+                editor.insertText("for i in range(10):");
+                makeNewline();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(4));
 
-                editor.insertText("for j in range(20):\n");
-                editor.autoIndentSelectedRows(2);
+                editor.insertText("for j in range(20):");
+                makeNewline();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(8));
 
-                editor.insertText("def f(x=[0,1,2,\n");
-                pythonIndent.indent();
+                editor.insertText("def f(x=[0,1,2,");
+                makeNewline();
                 expect(buffer.lineForRow(3)).toBe(" ".repeat(17));
 
-                editor.insertText("3,4,5]):\n");
-                pythonIndent.indent();
+                editor.insertText("3,4,5]):");
+                makeNewline();
                 expect(buffer.lineForRow(4)).toBe(" ".repeat(12));
             });
 
@@ -420,6 +425,40 @@ describe("python-indent", () => {
                 pythonIndent.indent();
                 expect(buffer.lineForRow(1)).toBe("");
             });
+
+            /*
+            def test(x):
+                return [x[0], x[-1]]
+            */
+            it("unindents after return statement with same-line opened/closed brackets", () => {
+                editor.insertText("def test(x):");
+                makeNewline();
+                editor.insertText("return [x[0], x[-1]]");
+                makeNewline();
+                expect(buffer.lineForRow(2)).toBe("");
+            });
+
+            /*
+            def f(api):
+                (api
+                 .doSomething()
+                 .anotherThing()
+                 ).finish()
+                print('Correctly indented!')
+            */
+            it("unindents correctly with same-line opened/closed brackets", () => {
+                editor.insertText("def f(api):");
+                makeNewline();
+                editor.insertText("(api");
+                makeNewline();
+                editor.insertText(".doSomething()");
+                makeNewline();
+                editor.insertText(".anotherThing()");
+                makeNewline();
+                editor.insertText(").finish()");
+                makeNewline();
+                expect(buffer.lineForRow(5)).toBe(" ".repeat(4));
+            });
         });
     });
 
@@ -483,12 +522,32 @@ describe("python-indent", () => {
                 )
             */
             it("does not dedent too much when doing hanging indent w/ return", () => {
-                editor.insertText("def test(x):\n");
-                pythonIndent.indent();
+                editor.insertText("def test(x):");
+                makeNewline();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(4));
-                editor.insertText("return (\n");
-                pythonIndent.indent();
+                editor.insertText("return (");
+                makeNewline();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(8));
+            });
+
+            /*
+            def test(x):
+                return (
+                    x
+                )
+            */
+            xit("correctly hanging indents return w/ newline between parentheses", () => {
+                // This test is skipped because it does not work for unknown
+                // reasons. The second makeNewline() call behaves differently
+                // during test running than when I call the exact same steps
+                // in the dev tools.
+                editor.insertText("def test(x):");
+                makeNewline();
+                editor.insertText("return ()");
+                editor.setCursorBufferPosition([1, editor.buffer.lineForRow(1).length - 1]);
+                makeNewline();
+                expect(buffer.lineForRow(2)).toBe(" ".repeat(8));
+                expect(buffer.lineForRow(3)).toBe(" ".repeat(4).concat(")"));
             });
 
             /*
@@ -498,11 +557,11 @@ describe("python-indent", () => {
                 )
             */
             it("does not dedent too much when doing hanging indent w/ return", () => {
-                editor.insertText("def test(x):\n");
-                pythonIndent.indent();
+                editor.insertText("def test(x):");
+                makeNewline();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(4));
-                editor.insertText("yield (\n");
-                pythonIndent.indent();
+                editor.insertText("yield (");
+                makeNewline();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(8));
             });
 
@@ -594,10 +653,10 @@ describe("python-indent", () => {
             )
             */
             it("continues correctly after bracket is opened and closed on same line", () => {
-                editor.insertText("alpha = (\n");
-                pythonIndent.indent();
-                editor.insertText("epsilon(),\n");
-                pythonIndent.indent();
+                editor.insertText("alpha = (");
+                makeNewline();
+                editor.insertText("epsilon(),");
+                makeNewline();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(4));
             });
 
