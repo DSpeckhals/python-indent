@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.1.5] - 2018-03-29
+# Fixed
+- Allow for the new tree-sitter parser's grammar for language-python to be used.
+
 ## [1.1.4] - 2017-11-09
 # Fixed
 - Fix error when typing in a "non-active" text editor (like the Git panel) after
