@@ -11,21 +11,21 @@ describe("python-indent", () => {
     let manualTabs = false;
 
     beforeEach(() => {
-        waitsForPromise(() =>
-            atom.workspace.open(FILE_NAME).then((ed) => {
-                const tabLength = 4;
-                editor = ed;
-                makeNewline = (tabs = 0) => {
-                    atom.commands.dispatch(
-                        atom.views.getView(editor),
-                        "editor:newline");
-                    editor.insertText(" ".repeat((manualTabs ? tabs : 0) * tabLength));
-                };
-                editor.setSoftTabs(true);
-                editor.setTabLength(tabLength);
-                buffer = editor.buffer;
-            }),
-        );
+        waitsForPromise(() => atom.workspace.open(FILE_NAME).then((ed) => {
+            const tabLength = 4;
+            editor = ed;
+            makeNewline = (tabs = 0) => {
+                atom.commands.dispatch(
+                    atom.views.getView(editor),
+                    "editor:newline",
+                );
+                editor.insertText(" ".repeat((manualTabs ? tabs : 0) * tabLength));
+            };
+            editor.setSoftTabs(true);
+            editor.setTabLength(tabLength);
+            const { buffer: editorBuffer } = editor;
+            buffer = editorBuffer;
+        }));
 
         waitsForPromise(() => {
             const packages = atom.packages.getAvailablePackageNames();
@@ -40,20 +40,16 @@ describe("python-indent", () => {
             return atom.packages.activatePackage(languagePackage);
         });
 
-        waitsForPromise(() =>
-            atom.packages.activatePackage("python-indent").then(() => {
-                pythonIndent = new PythonIndent();
-                manualTabs = pythonIndent.version[1] > 22;
-            }),
-        );
+        waitsForPromise(() => atom.packages.activatePackage("python-indent").then(() => {
+            pythonIndent = new PythonIndent();
+            manualTabs = pythonIndent.version[1] > 22;
+        }));
     });
 
-    describe("package", () =>
-        it("loads python file and package", () => {
-            expect(editor.getPath()).toContain("fixture.py");
-            expect(atom.packages.isPackageActive("python-indent")).toBe(true);
-        }),
-    );
+    describe("package", () => it("loads python file and package", () => {
+        expect(editor.getPath()).toContain("fixture.py");
+        expect(atom.packages.isPackageActive("python-indent")).toBe(true);
+    }));
 
     // Aligned with opening delimiter
     describe("aligned with opening delimiter", () => {
@@ -686,16 +682,10 @@ describe("python-indent", () => {
         });
     });
 
-    describe("when source is malformed", () =>
-
-        /*
-        class DoesBadlyFormedCodeBreak )
-        */
-        it("does not throw error or indent when code is malformed", () => {
-            editor.insertText("class DoesBadlyFormedCodeBreak )\n");
-            expect(() => pythonIndent.indent())
+    describe("when source is malformed", () => it("does not throw error or indent when code is malformed", () => {
+        editor.insertText("class DoesBadlyFormedCodeBreak )\n");
+        expect(() => pythonIndent.indent())
             .not.toThrow();
-            expect(buffer.lineForRow(1)).toBe("");
-        }),
-    );
+        expect(buffer.lineForRow(1)).toBe("");
+    }));
 });
