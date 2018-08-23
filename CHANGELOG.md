@@ -6,17 +6,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.1.6] - 2018-08-23
+### Added
+- Add support for Cython files.
+
 ## [1.1.5] - 2018-03-29
-# Fixed
+### Fixed
 - Allow for the new tree-sitter parser's grammar for language-python to be used.
 
 ## [1.1.4] - 2017-11-09
-# Fixed
+### Fixed
 - Fix error when typing in a "non-active" text editor (like the Git panel) after
 this package activates.
 
 ## [1.1.3] - 2017-11-09
-# Fixed
+### Fixed
 - Fix scenario that happens in Atom 1.23 and newer (currently only Beta) where
 language-python removed the "decreaseNextIndent" pattern. This fixed #54.
 - Handle edge case with bracket pair on same line.
@@ -158,7 +162,9 @@ in the line (perhaps a string).
 - Fluid indent in tuples, lists, and parameters.
 - Unindent to tab after fluid indented tuples, lists and parameters.
 
-[Unreleased]: https://github.com/DSpeckhals/python-indent/compare/v1.1.4...HEAD
+[Unreleased]: https://github.com/DSpeckhals/python-indent/compare/v1.1.6...HEAD
+[1.1.6]: https://github.com/DSpeckhals/python-indent/compare/v1.1.5...v1.1.6
+[1.1.5]: https://github.com/DSpeckhals/python-indent/compare/v1.1.4...v1.1.5
 [1.1.4]: https://github.com/DSpeckhals/python-indent/compare/v1.1.3...v1.1.4
 [1.1.3]: https://github.com/DSpeckhals/python-indent/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/DSpeckhals/python-indent/compare/v1.1.1...v1.1.2
