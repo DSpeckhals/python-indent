@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.1.7] - 2019-02-08
+### Security
+- Upgrade dependencies
+
 ## [1.1.6] - 2018-08-23
 ### Added
 - Add support for Cython files.
