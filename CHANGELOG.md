@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Changed
+- __Breaking__ Remove support for versions of Atom before 1.22.
+- Separate out the parsing into a different library to allow other editors to
+use its base functionality.
 
 ## [1.1.7] - 2019-02-08
 ### Security
