@@ -77,6 +77,11 @@ class TheClass(object):
              param_c):
         a_list = ["1", "2", "3",
                   "4"]
+
+# Multi Cursor
+print("1"):
+print("2"):
+
 x = [
     0, 1, 2,
     3, 4, 5

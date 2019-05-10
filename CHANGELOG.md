@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.2.1] - 2019-05-10
+### Added
+- Add support for multiple cursors. This fixed #59.
+
 ## [1.2.0] - 2019-05-10
 ### Changed
 - __Breaking__ Remove support for versions of Atom before 1.22.
@@ -172,7 +176,8 @@ in the line (perhaps a string).
 - Fluid indent in tuples, lists, and parameters.
 - Unindent to tab after fluid indented tuples, lists and parameters.
 
-[Unreleased]: https://github.com/DSpeckhals/python-indent/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/DSpeckhals/python-indent/compare/v1.2.1...HEAD
+[1.2.0]: https://github.com/DSpeckhals/python-indent/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/DSpeckhals/python-indent/compare/v1.1.7...v1.2.0
 [1.1.7]: https://github.com/DSpeckhals/python-indent/compare/v1.1.6...v1.1.7
 [1.1.6]: https://github.com/DSpeckhals/python-indent/compare/v1.1.5...v1.1.6
