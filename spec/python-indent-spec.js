@@ -8,7 +8,6 @@ describe("python-indent", () => {
     let editor = null;
     let pythonIndent = null;
     let makeNewline = null;
-    let manualTabs = false;
 
     beforeEach(() => {
         waitsForPromise(() => atom.workspace.open(FILE_NAME).then((ed) => {
@@ -19,7 +18,7 @@ describe("python-indent", () => {
                     atom.views.getView(editor),
                     "editor:newline",
                 );
-                editor.insertText(" ".repeat((manualTabs ? tabs : 0) * tabLength));
+                editor.insertText(" ".repeat(tabs * tabLength));
             };
             editor.setSoftTabs(true);
             editor.setTabLength(tabLength);
@@ -42,7 +41,6 @@ describe("python-indent", () => {
 
         waitsForPromise(() => atom.packages.activatePackage("python-indent").then(() => {
             pythonIndent = new PythonIndent();
-            manualTabs = pythonIndent.version[1] > 22;
         }));
     });
 
@@ -210,7 +208,7 @@ describe("python-indent", () => {
             */
             it("indents normally when delimiter is closed", () => {
                 editor.insertText("def test(param_a, param_b, param_c):");
-                makeNewline(1);
+                makeNewline();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(4));
             });
 
@@ -280,11 +278,11 @@ describe("python-indent", () => {
             */
             it("indents properly when blocks and lists are deeply nested", () => {
                 editor.insertText("for i in range(10):");
-                makeNewline(1);
+                makeNewline();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(4));
 
                 editor.insertText("for j in range(20):");
-                makeNewline(2);
+                makeNewline();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(8));
 
                 editor.insertText("def f(x=[0,1,2,");
@@ -456,7 +454,7 @@ describe("python-indent", () => {
                 editor.insertText(".anotherThing()");
                 makeNewline();
                 editor.insertText(").finish()");
-                makeNewline(1);
+                makeNewline();
                 expect(buffer.lineForRow(5)).toBe(" ".repeat(4));
             });
         });
@@ -523,7 +521,7 @@ describe("python-indent", () => {
             */
             it("does not dedent too much when doing hanging indent w/ return", () => {
                 editor.insertText("def test(x):");
-                makeNewline(1);
+                makeNewline();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(4));
                 editor.insertText("return (");
                 makeNewline(1);
@@ -556,9 +554,9 @@ describe("python-indent", () => {
                     x
                 )
             */
-            it("does not dedent too much when doing hanging indent w/ return", () => {
+            it("does not dedent too much when doing hanging indent w/ yield", () => {
                 editor.insertText("def test(x):");
-                makeNewline(1);
+                makeNewline();
                 expect(buffer.lineForRow(1)).toBe(" ".repeat(4));
                 editor.insertText("yield (");
                 makeNewline(1);
@@ -656,7 +654,7 @@ describe("python-indent", () => {
                 editor.insertText("alpha = (");
                 makeNewline();
                 editor.insertText("epsilon(),");
-                makeNewline(1);
+                makeNewline();
                 expect(buffer.lineForRow(2)).toBe(" ".repeat(4));
             });
 
