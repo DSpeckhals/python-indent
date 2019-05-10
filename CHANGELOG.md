@@ -173,7 +173,8 @@ in the line (perhaps a string).
 - Unindent to tab after fluid indented tuples, lists and parameters.
 
 [Unreleased]: https://github.com/DSpeckhals/python-indent/compare/v1.2.0...HEAD
-[1.2.0]: https://github.com/DSpeckhals/python-indent/compare/v1.1.6...v1.2.0
+[1.2.0]: https://github.com/DSpeckhals/python-indent/compare/v1.1.7...v1.2.0
+[1.1.7]: https://github.com/DSpeckhals/python-indent/compare/v1.1.6...v1.1.7
 [1.1.6]: https://github.com/DSpeckhals/python-indent/compare/v1.1.5...v1.1.6
 [1.1.5]: https://github.com/DSpeckhals/python-indent/compare/v1.1.4...v1.1.5
 [1.1.4]: https://github.com/DSpeckhals/python-indent/compare/v1.1.3...v1.1.4
