@@ -680,6 +680,19 @@ describe("python-indent", () => {
         });
     });
 
+    /*
+    print("1")
+    print("2")
+    */
+    describe("when multiple cursors are used", () => it("indents at both cursors", () => {
+        editor.insertText("print('1',\n)\nprint('2',\n)");
+        editor.setCursorBufferPosition([1, 6]);
+        editor.addCursorAtBufferPosition([4, 4]);
+        pythonIndent.indent();
+        expect(buffer.lineForRow(1)).toBe(`${" ".repeat(6)})`);
+        expect(buffer.lineForRow(3)).toBe(`${" ".repeat(6)})`);
+    }));
+
     describe("when source is malformed", () => it("does not throw error or indent when code is malformed", () => {
         editor.insertText("class DoesBadlyFormedCodeBreak )\n");
         expect(() => pythonIndent.indent())
