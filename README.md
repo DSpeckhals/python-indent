@@ -1,4 +1,4 @@
-# python-indent [![Build Status](https://travis-ci.org/DSpeckhals/python-indent.svg?branch=master)](https://travis-ci.org/DSpeckhals/python-indent)
+# python-indent [![Build Status](https://travis-ci.com/DSpeckhals/python-indent.svg?branch=master)](https://travis-ci.com/DSpeckhals/python-indent)
 
 [![apm install python-indent](https://apm-badges.herokuapp.com/apm/python-indent.svg?theme=one-dark)](https://atom.io/packages/python-indent)
 
