@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.2.2] - 2019-05-13
+### Fixed
+- Fix a couple of hanging indentation failures related to the parsing library
+changes. This fixed #69. This fix introduced another, much more rare bug around
+when a comment character is at the end of a line before a line that should be a
+hanging indent.
+
 ## [1.2.1] - 2019-05-10
 ### Added
 - Add support for multiple cursors. This fixed #59.
@@ -176,8 +183,9 @@ in the line (perhaps a string).
 - Fluid indent in tuples, lists, and parameters.
 - Unindent to tab after fluid indented tuples, lists and parameters.
 
-[Unreleased]: https://github.com/DSpeckhals/python-indent/compare/v1.2.1...HEAD
-[1.2.0]: https://github.com/DSpeckhals/python-indent/compare/v1.2.0...v1.2.1
+[Unreleased]: https://github.com/DSpeckhals/python-indent/compare/v1.2.2...HEAD
+[1.2.2]: https://github.com/DSpeckhals/python-indent/compare/v1.2.1...v1.2.2
+[1.2.1]: https://github.com/DSpeckhals/python-indent/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/DSpeckhals/python-indent/compare/v1.1.7...v1.2.0
 [1.1.7]: https://github.com/DSpeckhals/python-indent/compare/v1.1.6...v1.1.7
 [1.1.6]: https://github.com/DSpeckhals/python-indent/compare/v1.1.5...v1.1.6
