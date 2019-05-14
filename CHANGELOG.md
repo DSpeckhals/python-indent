@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.2.3] - 2019-05-14
+### Fixed
+- Fix regression that first occurred in 1.2.2 where a text buffer was trying to
+be obtained without an active text editor. The "editor:newline" event from Atom
+is global. This fixed #71.
+
 ## [1.2.2] - 2019-05-13
 ### Fixed
 - Fix a couple of hanging indentation failures related to the parsing library
@@ -183,7 +189,8 @@ in the line (perhaps a string).
 - Fluid indent in tuples, lists, and parameters.
 - Unindent to tab after fluid indented tuples, lists and parameters.
 
-[Unreleased]: https://github.com/DSpeckhals/python-indent/compare/v1.2.2...HEAD
+[Unreleased]: https://github.com/DSpeckhals/python-indent/compare/v1.2.3...HEAD
+[1.2.3]: https://github.com/DSpeckhals/python-indent/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/DSpeckhals/python-indent/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/DSpeckhals/python-indent/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/DSpeckhals/python-indent/compare/v1.1.7...v1.2.0
