@@ -1,7 +1,5 @@
 # python-indent [![Build Status](https://travis-ci.com/DSpeckhals/python-indent.svg?branch=master)](https://travis-ci.com/DSpeckhals/python-indent)
 
-[![apm install python-indent](https://apm-badges.herokuapp.com/apm/python-indent.svg?theme=one-dark)](https://atom.io/packages/python-indent)
-
 _Atom with easy PEP8 indentation...No more space bar mashing!_
 
 ![example of python-indent](https://raw.githubusercontent.com/DSpeckhals/python-indent/master/resources/img/python-indent-demonstration.gif)
