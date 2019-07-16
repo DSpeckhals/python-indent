@@ -13,7 +13,7 @@ os:
   - linux
   - osx
 
-dist: trusty
+dist: xenial
 
 ### Generic setup follows ###
 script:
@@ -35,8 +35,6 @@ git:
 
 sudo: false
 
-dist: trusty
-
 addons:
   apt:
     packages:
@@ -44,3 +42,4 @@ addons:
     - fakeroot
     - git
     - libsecret-1-dev
+    - libgconf-2-4
