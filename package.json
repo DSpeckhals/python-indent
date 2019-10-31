@@ -11,8 +11,8 @@
   ],
   "contributors": [
     {
-      "name": "Dustin Speckhals",
-      "email": "dustin1114@gmail.com"
+      "name": "Kevin Rose",
+      "email": "<kevin+gh@maypark.com>"
     }
   ],
   "repository": "https://github.com/DSpeckhals/python-indent",
@@ -29,6 +29,6 @@
     "eslint-plugin-react-hooks": "^1.7.0"
   },
   "dependencies": {
-    "python-indent-parser": "0.1.2"
+    "python-indent-parser": "0.1.3"
   }
 }
