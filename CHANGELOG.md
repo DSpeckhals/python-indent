@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.2.5] - 2019-11-12
+### Changed
+- Upgrade python-indent-parser to latest version.
+
 ## [1.2.4] - 2019-05-31
 ### Changed
 - Remove broken apm badge.
